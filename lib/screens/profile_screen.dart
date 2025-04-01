@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/game_player_card.dart';
 
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 

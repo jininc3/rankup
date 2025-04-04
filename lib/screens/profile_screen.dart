@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import '../widgets/game_player_card.dart';
 
+// Define the Discord Red & Grey theme colors
+class DiscordTheme {
+  static const primaryRed = Color(0xFFED4245);
+  static const darkGrey = Color(0xFF2C2F33);
+  static const charcoalGrey = Color(0xFF23272A);
+  static const lightGrey = Color(0xFFB9BBBE);
+  static const white = Color(0xFFFFFFFF);
+  static const mutedRed = Color(0xFFA83232);
+  static const softGrey = Color(0xFF99AAB5);
+}
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -10,28 +21,59 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  
+  // Scroll controller to track card scrolling position
+  final ScrollController _cardsScrollController = ScrollController();
+  bool _showScrollIndicator = true;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this); // Changed to 2 tabs
+    _tabController = TabController(length: 2, vsync: this);
+    
+    // Listen to scroll events to hide/show scroll indicator
+    _cardsScrollController.addListener(() {
+      if (_cardsScrollController.position.pixels > 20 && _showScrollIndicator) {
+        setState(() {
+          _showScrollIndicator = false;
+        });
+      } else if (_cardsScrollController.position.pixels <= 20 && !_showScrollIndicator) {
+        setState(() {
+          _showScrollIndicator = true;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _cardsScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Add a subtle gradient background
+      backgroundColor: DiscordTheme.charcoalGrey,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Profile'),
+        backgroundColor: DiscordTheme.darkGrey.withOpacity(0.9),
+        elevation: 0,
+        title: const Text(
+  'ProGamerName',
+  style: TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    color: DiscordTheme.white,
+  ),
+),
+
         actions: [
-          // Card Activity button
+          // Card Activity button with cleaner icon
           IconButton(
-            icon: const Icon(Icons.history),
+            icon: const Icon(Icons.history_outlined, color: DiscordTheme.lightGrey),
             tooltip: 'Card Activity',
             onPressed: () {
               Navigator.push(
@@ -40,119 +82,220 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               );
             },
           ),
-          // Settings button
+          // Settings button with more modern icon
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings_outlined, color: DiscordTheme.lightGrey),
             onPressed: () {
               // Open settings
             },
           ),
+          const SizedBox(width: 8), // Add some padding on the right
         ],
       ),
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            // Profile Header
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+      body: Container(
+        // Add a subtle gradient background
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              DiscordTheme.charcoalGrey,
+              DiscordTheme.charcoalGrey.withBlue(35),
+            ],
+          ),
+        ),
+        child: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              // Profile Header with more white space and modern styling
+              SliverToBoxAdapter(
+                child: SafeArea(
+                bottom: false,
+                child: Padding(
+                padding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 20.0),
                 child: Column(
-                  children: [
-                    // Profile picture
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Color(0xFF0A1A2A),
-                      child: Text(
-                        'PG',
-                        style: TextStyle(fontSize: 36, color: Colors.white),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+          // Profile picture, stats, name, edit button, etc.
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Profile picture with enhanced border
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Border container
+                              Container(
+                                width: 96,
+                                height: 96,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFF4A80EB), // Diamond color
+                                    width: 2,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF4A80EB).withOpacity(0.3),
+                                      blurRadius: 8,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Actual profile image
+                              CircleAvatar(
+                                radius: 44,
+                                backgroundColor: DiscordTheme.darkGrey,
+                                backgroundImage: const AssetImage('assets/images/placeholder.png'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 24), // More spacing
+                          
+                          // Stats in a single column with bolder text
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _buildStatColumn('7', 'Cards'),
+                                _buildStatColumn('1.2k', 'Followers'),
+                                _buildStatColumn('342', 'Following'),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'ProGamerName',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('Competitive player since 2015'),
-                    const SizedBox(height: 16),
-                    
-                    // Stats row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildStatColumn('PlayerCards', '7'),
-                        _buildStatColumn('Followers', '1.2k'),
-                        _buildStatColumn('Following', '342'),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    
-                    // Edit profile button
-                    OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF2996F8)), // Blue border
-                        foregroundColor: const Color(0xFF2996F8), // Blue text
+                      
+                      const SizedBox(height: 20), // More spacing
+                      
+                      // User info section with improved typography hierarchy
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          
+                          Text(
+                            'Competitive player since 2015',
+                            style: TextStyle(
+                              color: DiscordTheme.softGrey,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
                       ),
-                      onPressed: () {
-                        // Navigate to edit profile
-                      },
-                      child: const Text('Edit Profile'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            // Pinned TabBar - now with just 2 tabs
-            SliverPersistentHeader(
-              delegate: _SliverAppBarDelegate(
-                TabBar(
-                  controller: _tabController,
-                  // Custom tab styling for blue selection
-                  indicator: const UnderlineTabIndicator(
-                    borderSide: BorderSide(
-                      width: 2.0,
-                      color: Color(0xFF2996F8), // Blue indicator
-                    ),
+                      
+                      const SizedBox(height: 24), // More spacing
+                      
+                      // Edit profile button with Discord red styling and enhanced appearance
+                      SizedBox(
+                        width: double.infinity,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: DiscordTheme.primaryRed.withOpacity(0.2),
+                                blurRadius: 8,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: DiscordTheme.primaryRed, width: 1),
+                              foregroundColor: DiscordTheme.primaryRed,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            onPressed: () {
+                              // Navigate to edit profile
+                            },
+                            child: const Text(
+                              'Edit Profile',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  labelColor: const Color(0xFF2996F8), // Blue text for selected tab
-                  unselectedLabelColor: Colors.grey, // Grey text for unselected tabs
-                  tabs: const [
-                    Tab(text: 'PLAYER CARDS'),
-                    Tab(text: 'HIGHLIGHTS'),
-                  ],
                 ),
               ),
-              pinned: true,
-            ),
-          ];
-        },
-        // TabBarView as the body - now with 2 tabs only
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildPlayerCardsTab(),
-            _buildHighlightsTab(),
-          ],
+              ),
+              
+              // Tabs with Discord red styling and improved indicator
+              SliverPersistentHeader(
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    controller: _tabController,
+                    // More minimal, modern tab indicator
+                    indicator: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 3.0,
+                          color: DiscordTheme.primaryRed,
+                        ),
+                      ),
+                    ),
+                    labelColor: DiscordTheme.white,
+                    unselectedLabelColor: DiscordTheme.softGrey,
+                    labelStyle: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      letterSpacing: 0.8,
+                    ),
+                    unselectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                      letterSpacing: 0.5,
+                    ),
+                    tabs: const [
+                      Tab(icon: Icon(Icons.grid_view_rounded), text: 'PLAYER CARDS'),
+                      Tab(icon: Icon(Icons.play_circle_outline), text: 'HIGHLIGHTS'),
+                    ],
+                  ),
+                ),
+                pinned: true,
+              ),
+            ];
+          },
+          // TabBarView with modern styling
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildPlayerCardsTab(),
+              _buildHighlightsTab(),
+            ],
+          ),
         ),
       ),
+      // Remove the bottom navigation bar from here - it will be provided by the parent widget
     );
   }
 
-  Widget _buildStatColumn(String title, String count) {
+  Widget _buildStatColumn(String count, String title) {
     return Column(
       children: [
         Text(
           count,
           style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 24, // Increased size
+            fontWeight: FontWeight.w800, // Bolder font
+            color: DiscordTheme.white,
           ),
         ),
+        const SizedBox(height: 4),
         Text(
           title,
           style: const TextStyle(
-            color: Colors.grey,
+            color: DiscordTheme.softGrey,
+            fontSize: 14,
           ),
         ),
       ],
@@ -160,195 +303,458 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
 
   Widget _buildPlayerCardsTab() {
-    return CustomScrollView(
-      slivers: [
-        // Title section
-        const SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              'My Game Cards',
-              style: TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold,
+    return Stack(
+      children: [
+        CustomScrollView(
+          slivers: [
+            // Add some padding at the top of the tab
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 16),
+            ),
+            
+            // Horizontal scrolling cards with more padding
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 420, // Increased height for cards with margins
+                child: Stack(
+                  children: [
+                    // Actual card list
+                    ListView.builder(
+                      controller: _cardsScrollController,
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.only(left: 16, right: 32),
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: 7,
+                      itemBuilder: (context, index) {
+                        String game = index % 3 == 0 ? 'League of Legends' :
+                                    index % 3 == 1 ? 'Valorant' : 'CS:GO';
+                        
+                        String rank = index % 3 == 0 ? 'Platinum' :
+                                    index % 3 == 1 ? 'Diamond' : 'Global Elite';
+                        
+                        List<String> characters = index % 3 == 0 ? ['Ahri', 'Lux', 'Jinx'] :
+                                               index % 3 == 1 ? ['Jett', 'Reyna', 'Sage'] :
+                                               ['AWP', 'AK-47', 'M4A1-S'];
+                        
+                        String bio = index % 3 == 0 ? 'Mid lane main since Season 3' :
+                                   index % 3 == 1 ? 'Duelist main with 1.8 K/D ratio' :
+                                   'Entry fragger with 8 years of experience';
+                        
+                        String username = 'Player${index + 1}';
+                        String country = index % 3 == 0 ? 'USA' : 
+                                       index % 3 == 1 ? 'Canada' : 'UK';
+                        
+                        // If it's the first card, add a "New" badge
+                        bool isNew = index == 0;
+                        
+                        // Add card with improved appearance
+                        return Container(
+                          width: 300,
+                          margin: const EdgeInsets.fromLTRB(8.0, 24.0, 8.0, 16.0),
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              // The card itself
+                              GamePlayerCard(
+                                gameName: game,
+                                rank: rank,
+                                mainCharacters: characters,
+                                bio: bio,
+                                username: username,
+                                country: country,
+                                onTap: () {
+                                  // View card details
+                                },
+                              ),
+                              
+                              // The "New" badge for the first card only
+                              if (isNew)
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: DiscordTheme.primaryRed,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: DiscordTheme.primaryRed.withOpacity(0.4),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Text(
+                                      'NEW',
+                                      style: TextStyle(
+                                        color: DiscordTheme.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              
+                              // Game-specific icon (smaller logos for each game)
+                              Positioned(
+                                top: 12,
+                                left: 12,
+                                child: _buildGameLogo(game),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    
+                    // Scrolling indicator (when cards are available)
+                    if (_showScrollIndicator)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: 32,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Colors.transparent,
+                                DiscordTheme.primaryRed.withOpacity(0.1),
+                                DiscordTheme.primaryRed.withOpacity(0.2),
+                              ],
+                            ),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.chevron_right,
+                              color: DiscordTheme.white,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-        
-        // Horizontal scrolling cards section
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: 400, // Height for the card ratio
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemCount: 7,
-              itemBuilder: (context, index) {
-                String game = index % 3 == 0 ? 'League of Legends' :
-                              index % 3 == 1 ? 'Valorant' : 'CS:GO';
-                
-                String rank = index % 3 == 0 ? 'Platinum' :
-                              index % 3 == 1 ? 'Diamond' : 'Global Elite';
-                
-                List<String> characters = index % 3 == 0 ? ['Ahri', 'Lux', 'Jinx'] :
-                                        index % 3 == 1 ? ['Jett', 'Reyna', 'Sage'] :
-                                        ['AWP', 'AK-47', 'M4A1-S'];
-                
-                String bio = index % 3 == 0 ? 'Mid lane main since Season 3' :
-                            index % 3 == 1 ? 'Duelist main with 1.8 K/D ratio' :
-                            'Entry fragger with 8 years of experience';
-                
-                String username = 'Player${index + 1}';
-                String country = index % 3 == 0 ? 'USA' : 
-                                index % 3 == 1 ? 'Canada' : 'UK';
-                      
-                return Container(
-                  width: 350, // Card width
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: GamePlayerCard(
-                    gameName: game,
-                    rank: rank,
-                    mainCharacters: characters,
-                    bio: bio,
-                    username: username,
-                    country: country,
-                    onTap: () {
-                      // View card details
-                    },
+            
+            // Empty state (when no cards are present)
+            SliverToBoxAdapter(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    children: [
+                      // Only show this when itemCount is 0 (moved to a separate widget for this example)
+                      if (false) // Replace with actual condition (here showing it as false for example)
+                        _buildEmptyStateWidget(),
+                    ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
-          ),
+            
+            // Add extra padding at the bottom to ensure content doesn't get hidden behind nav bar
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 80), // Increase padding to account for bottom nav bar
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildHighlightsTab() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(8.0),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.8,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
+  Widget _buildGameLogo(String game) {
+    IconData iconData;
+    Color color;
+    
+    switch (game) {
+      case 'Valorant':
+        iconData = Icons.filter_tilt_shift; // Approximating Valorant icon
+        color = const Color(0xFFFF4655); // Valorant red
+        break;
+      case 'League of Legends':
+        iconData = Icons.shield; // Approximating LoL icon
+        color = const Color(0xFF1CA0DC); // LoL blue
+        break;
+      case 'CS:GO':
+        iconData = Icons.gps_fixed; // Approximating CS:GO icon
+        color = const Color(0xFFFFD700); // CS:GO gold/yellow
+        break;
+      default:
+        iconData = Icons.games;
+        color = DiscordTheme.primaryRed;
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: DiscordTheme.darkGrey.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(8),
       ),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return Card(
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
+      child: Icon(
+        iconData,
+        color: color,
+        size: 16,
+      ),
+    );
+  }
+
+  Widget _buildEmptyStateWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(height: 40),
+        Icon(
+          Icons.add_circle_outline,
+          size: 60,
+          color: DiscordTheme.softGrey.withOpacity(0.6),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'No player cards yet',
+          style: TextStyle(
+            color: DiscordTheme.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Using Container with color instead of network image
-              Container(
-                color: Colors.grey.shade800,
-              ),
-              // Gradient overlay for better text visibility
-              Positioned.fill(
-                child: Container(
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Create your first player card to showcase your gaming skills and achievements',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: DiscordTheme.softGrey,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 24),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: DiscordTheme.primaryRed,
+            foregroundColor: DiscordTheme.white,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onPressed: () {
+            // Create new player card
+          },
+          child: const Text('Create Player Card'),
+        ),
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildHighlightsTab() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 0), // Increase padding to account for bottom nav bar
+      child: GridView.builder(
+        padding: const EdgeInsets.all(16.0), // More padding
+        physics: const BouncingScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.8,
+          crossAxisSpacing: 16, // More spacing between items
+          mainAxisSpacing: 16, // More spacing between items
+        ),
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12), // More modern rounded corners
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                // Using Container with color instead of network image
+                Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                    color: DiscordTheme.darkGrey,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                ),
+                // Gradient overlay for better text visibility
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          DiscordTheme.charcoalGrey.withOpacity(0.7),
+                          DiscordTheme.charcoalGrey.withOpacity(0.9),
+                        ],
+                        stops: const [0.6, 0.8, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                // Play button with improved styling
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: DiscordTheme.primaryRed.withOpacity(0.3),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: DiscordTheme.white,
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: DiscordTheme.primaryRed.withOpacity(0.3),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
                       ],
-                      stops: const [0.6, 1.0],
+                    ),
+                    child: const Icon(
+                      Icons.play_arrow,
+                      size: 36,
+                      color: DiscordTheme.white,
                     ),
                   ),
                 ),
-              ),
-              // Play button
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0A1A2A).withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.play_arrow,
-                    size: 36,
-                    color: Colors.white,
+                // Add a game icon overlay
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: _buildGameLogo(index % 3 == 0 ? 'Valorant' : 
+                                     index % 3 == 1 ? 'League of Legends' : 'CS:GO'),
+                ),
+                // Title at bottom
+                Positioned(
+                  bottom: 12,
+                  left: 12,
+                  right: 12,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Highlight ${index + 1}',
+                        style: const TextStyle(
+                          color: DiscordTheme.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.visibility_outlined,
+                            size: 14,
+                            color: DiscordTheme.softGrey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${(index + 1) * 124} views',
+                            style: const TextStyle(
+                              color: DiscordTheme.softGrey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              // Title at bottom
-              Positioned(
-                bottom: 8,
-                left: 8,
-                right: 8,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Highlight ${index + 1}',
+                // Add duration badge
+                Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      '0:${30 + (index * 7)}',
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        color: DiscordTheme.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Text(
-                      '${(index + 1) * 124} views',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
 
-// Separate Card Activity Screen
+// Modernized Card Activity Screen with Discord theme
 class CardActivityScreen extends StatelessWidget {
   const CardActivityScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: DiscordTheme.charcoalGrey,
       appBar: AppBar(
-        title: const Text('Card Activity'),
-        backgroundColor: const Color(0xFF1E1E1E),
+        title: const Text('Activity'),
+        backgroundColor: DiscordTheme.darkGrey,
+        elevation: 0,
       ),
-      body: ListView.builder(
+      body: ListView.separated(
+        physics: const BouncingScrollPhysics(),
         itemCount: 20,
+        separatorBuilder: (context, index) => const Divider(
+          color: DiscordTheme.darkGrey,
+          height: 1,
+          indent: 70,
+        ),
         itemBuilder: (context, index) {
           return ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
             leading: CircleAvatar(
-              backgroundColor: index % 3 == 0 ? Colors.blue.shade800 :
-                              index % 3 == 1 ? Colors.purple.shade800 : 
-                                            Colors.orange.shade800,
+              backgroundColor: index % 3 == 0 ? DiscordTheme.primaryRed :
+                            index % 3 == 1 ? DiscordTheme.mutedRed : 
+                                        DiscordTheme.darkGrey,
               child: Icon(
                 index % 3 == 0 ? Icons.update :
                 index % 3 == 1 ? Icons.star : Icons.trending_up,
-                color: Colors.white,
+                color: DiscordTheme.white,
                 size: 20,
               ),
-              
             ),
             title: Text(
               index % 4 == 0 ? 'Updated your Valorant rank to Diamond' :
               index % 4 == 1 ? 'Gained 14 new followers this week' :
               index % 4 == 2 ? 'Win streak: 5 games in League of Legends' :
-                            'Matched with Player${index + 10} for duo queue',
-              style: const TextStyle(fontWeight: FontWeight.w500),
+                          'Matched with Player${index + 10} for duo queue',
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: DiscordTheme.white,
+                fontSize: 15,
+              ),
             ),
-            subtitle: Text('${index * 3 + 1} hours ago'),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 6.0),
+              child: Text(
+                '${index * 3 + 1} hours ago',
+                style: const TextStyle(
+                  color: DiscordTheme.softGrey,
+                  fontSize: 13,
+                ),
+              ),
+            ),
           );
         },
       ),
@@ -371,7 +777,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      color: DiscordTheme.darkGrey.withOpacity(0.9),
       child: _tabBar,
     );
   }

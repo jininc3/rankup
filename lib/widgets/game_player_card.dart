@@ -1,4 +1,16 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+
+// Discord-style color palette
+class DiscordColors {
+  static const Color primaryRed = Color(0xFFED4245);
+  static const Color darkGrey = Color(0xFF2C2F33);
+  static const Color charcoalGrey = Color(0xFF23272A);
+  static const Color lightGrey = Color(0xFFB9BBBE);
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color mutedRed = Color(0xFFA83232);
+  static const Color softGrey = Color(0xFF99AAB5);
+}
 
 class GamePlayerCard extends StatelessWidget {
   final String gameName;
@@ -21,206 +33,114 @@ class GamePlayerCard extends StatelessWidget {
   }) : super(key: key);
 
   Color getRankColor(String rank) {
+    // Match colors to Valorant rank colors
     switch (rank.toLowerCase()) {
       case 'iron':
-        return const Color(0xFF8E9093);
+        return const Color(0xFF7C8792); // Grey
       case 'bronze':
-        return const Color(0xFFCD7F32);
+        return const Color(0xFFAD7F47); // Bronze
       case 'silver':
-        return const Color(0xFFC0C0C0);
+        return const Color(0xFFAFB8C4); // Silver
       case 'gold':
-        return const Color(0xFFFFD700);
+        return const Color(0xFFECCE52); // Gold
       case 'platinum':
-        return const Color(0xFF00FFFF);
+        return const Color(0xFF47B986); // Teal
       case 'diamond':
-        return const Color(0xFF4B92DB);
-      case 'master':
-        return const Color(0xFF9A35FF);
-      case 'grandmaster':
-        return const Color(0xFFFF4655);
-      case 'challenger':
+        return const Color(0xFF4A80EB); // Blue (adjusted to match image)
+      case 'ascendant':
+        return const Color(0xFF44CE9C); // Green
+      case 'immortal':
+        return const Color(0xFFBF4D4D); // Red
       case 'radiant':
-      case 'global elite':
-        return const Color(0xFFFF9800);
+        return const Color(0xFFFFD700); // Gold/Yellow
       default:
-        return const Color(0xFF2996F8); // Valorant blue default
+        return DiscordColors.primaryRed; // Discord red default
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final rankColor = getRankColor(rank);
-    final isPlatinum = rank.toLowerCase().contains('platinum');
-
-    // Get the available width from the parent container
-    // This will be used to maintain the 100:200 width-to-height ratio
+    
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate height based on width to maintain 100:200 ratio
-        final cardWidth = constraints.maxWidth;
-        final cardHeight = cardWidth * 2; // 100:200 ratio
+        final cardWidth = constraints.maxWidth * 0.85; // Make card 85% of available width
+        // Making the card more rectangular like in the image
+        final cardHeight = cardWidth * 1.5; // Slightly shorter aspect ratio
         
         return GestureDetector(
           onTap: onTap,
           child: Container(
+            width: cardWidth,
             height: cardHeight,
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: rankColor, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: rankColor.withOpacity(0.35),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
+            margin: const EdgeInsets.fromLTRB(8.0, 24.0, 8.0, 16.0), // More space above the card
             child: Stack(
               children: [
-                // Background image for platinum rank
-                if (isPlatinum)
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: Opacity(
-                        opacity: 0.85, // Slightly transparent so other elements are visible
-                        child: Image.asset(
-                          'assets/images/platinum_bg.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
+                // Card background with border
+                _buildCardBackground(cardWidth, cardHeight, rankColor),
                 
-                // Geometric patterns for Valorant-style aesthetic
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: ClipPath(
-                    clipper: DiagonalClipper(),
-                    child: Container(
-                      height: 60,
-                      width: 60,
-                      color: rankColor.withOpacity(0.6),
-                    ),
-                  ),
-                ),
-                // Left bottom corner line
-                Positioned(
-                  bottom: 20,
-                  left: 0,
-                  child: Container(
-                    height: 2,
-                    width: 60,
-                    color: rankColor.withOpacity(0.3),
-                  ),
-                ),
-                // Top main content (game card design)
+                // Card content
                 Positioned.fill(
-                  child: Column(
-                    children: [
-                      // Top section (80% of the card)
-                      Expanded(
-                        flex: 8,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.black.withOpacity(isPlatinum ? 0.2 : 0.5),
-                                Colors.transparent,
-                              ],
+                  child: Padding(
+                    padding: EdgeInsets.all(cardWidth * 0.05),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Top section - Username
+                        Padding(
+                          padding: EdgeInsets.only(top: cardWidth * 0.05),
+                          child: Text(
+                            username.toUpperCase(),
+                            style: const TextStyle(
+                              color: DiscordColors.white,
+                              fontSize: 22, // Reduced font size
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.5, // Slightly reduced letter spacing
                             ),
+                            textAlign: TextAlign.center,
                           ),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Game icon (could be replaced with game logo)
-                                Icon(
-                                  _getGameIcon(gameName),
-                                  size: 60,
-                                  color: rankColor.withOpacity(isPlatinum ? 0.7 : 0.4),
+                        ),
+                        
+                        // Middle section - Rank icon
+                        SizedBox(
+                          height: cardWidth * 0.4,
+                          child: _buildRankEmblem(rank, rankColor, cardWidth * 0.2),
+                        ),
+                                                
+                        // Bottom section - Rank name
+                        Column(
+                          children: [
+                            Text(
+                              rank.toUpperCase(),
+                              style: const TextStyle(
+                                color: DiscordColors.white,
+                                fontSize: 22, // Reduced font size
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 2, // Slightly reduced letter spacing
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            
+                            // Game name at bottom like "VALORANT" in the reference image
+                            Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: cardWidth * 0.05),
+                              child: Text(
+                                gameName.toUpperCase(),
+                                style: TextStyle(
+                                  color: rankColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.5,
                                 ),
-                                const SizedBox(height: 20),
-                                // Optional: Add geometric patterns for visual appeal
-                              ],
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                      // Bottom info section (20% of the card)
-                      Expanded(
-                        flex: 5,
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(isPlatinum ? 0.6 : 0.5),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(6),
-                              bottomRight: Radius.circular(6),
-                            ),
-                          ),
-                          child: _buildCardInfo(rankColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Game label at top
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Icon(_getGameIcon(gameName),
-                          size: 14, color: Colors.white70),
-                      const SizedBox(width: 6),
-                      Text(
-                        gameName.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.white60,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Platinum rank indicator
-                if (isPlatinum)
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: rankColor, width: 1.5),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.workspace_premium, size: 14, color: rankColor),
-                          const SizedBox(width: 4),
-                          Text(
-                            'PLATINUM',
-                            style: TextStyle(
-                              color: rankColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
+                ),
               ],
             ),
           ),
@@ -229,114 +149,198 @@ class GamePlayerCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCardInfo(Color rankColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Username
-        Text(
-          username,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 12),
-
-        // Country & Rank Row
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.public,
-                    size: 16, color: Colors.white54),
-                const SizedBox(width: 4),
-                Text(
-                  country,
-                  style: const TextStyle(
-                      color: Colors.white60, fontSize: 13),
-                ),
-              ],
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: rankColor.withOpacity(0.2),
-                border: Border.all(color: rankColor, width: 1),
-              ),
-              child: Text(
-                rank.toUpperCase(),
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: rankColor,
-                    fontSize: 12),
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 12),
-
-        // Agents / Characters
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'MAIN: ',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white54,
-                fontSize: 12,
-              ),
-            ),
-            Expanded(
-              child: Text(
-                mainCharacters.join(' • '),
-                style: const TextStyle(
-                    fontSize: 13, color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ],
+  Widget _buildCardBackground(double width, double height, Color borderColor) {
+    return Center(
+      child: CustomPaint(
+        size: Size(width, height),
+        painter: ValorantCardPainter(borderColor),
+      ),
     );
   }
 
-  IconData _getGameIcon(String game) {
-    switch (game.toLowerCase()) {
-      case 'league of legends':
-        return Icons.shield;
-      case 'valorant':
-        return Icons.gps_fixed;
-      case 'cs:go':
-      case 'counter-strike':
-        return Icons.my_location;
-      case 'apex legends':
-        return Icons.flash_on;
-      case 'fortnite':
-        return Icons.landscape;
-      default:
-        return Icons.gamepad;
-    }
+  Widget _buildRankEmblem(String rank, Color rankColor, double size) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Octagonal container with diamond inside
+          Container(
+            width: size * 2,
+            height: size * 2,
+            decoration: BoxDecoration(
+              color: DiscordColors.darkGrey,
+              borderRadius: BorderRadius.circular(size * 0.3),
+            ),
+            child: Center(
+              child: CustomPaint(
+                size: Size(size * 1.2, size * 1.2),
+                painter: DiamondPainter(rankColor),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
-class DiagonalClipper extends CustomClipper<Path> {
+class ValorantCardPainter extends CustomPainter {
+  final Color borderColor;
+  
+  ValorantCardPainter(this.borderColor);
+  
   @override
-  Path getClip(Size size) {
+  void paint(Canvas canvas, Size size) {
+    final borderWidth = size.width * 0.03; // Reduced border width from 5% to 3%
+    
+    // Create a rounded rectangle path with clipped corners (octagonal shape)
+    final path = _createOctagonalPath(size, borderWidth * 1.5);
+    
+    // Draw shadow
+    canvas.drawShadow(path, Colors.black.withOpacity(0.5), 10, true);
+    
+    // Draw background
+    final backgroundPaint = Paint()
+      ..color = DiscordColors.charcoalGrey
+      ..style = PaintingStyle.fill;
+    
+    canvas.drawPath(path, backgroundPaint);
+    
+    // Draw border
+    final borderPaint = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth;
+    
+    canvas.drawPath(path, borderPaint);
+    
+    // Draw inner accent line
+    final innerPath = _createOctagonalPath(
+      Size(size.width - borderWidth * 2, size.height - borderWidth * 2),
+      borderWidth,
+      offset: Offset(borderWidth, borderWidth)
+    );
+    
+    final innerBorderPaint = Paint()
+      ..color = DiscordColors.darkGrey
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    
+    canvas.drawPath(innerPath, innerBorderPaint);
+  }
+  
+  Path _createOctagonalPath(Size size, double cornerCut, {Offset offset = Offset.zero}) {
     final path = Path();
-    path.moveTo(size.width, 0);
-    path.lineTo(size.width, size.height * 0.6);
-    path.lineTo(size.width * 0.4, 0);
+    
+    // Define points for an octagonal shape (clipped corners rectangle)
+    path.moveTo(offset.dx + cornerCut, offset.dy);
+    path.lineTo(offset.dx + size.width - cornerCut, offset.dy);
+    path.lineTo(offset.dx + size.width, offset.dy + cornerCut);
+    path.lineTo(offset.dx + size.width, offset.dy + size.height - cornerCut);
+    path.lineTo(offset.dx + size.width - cornerCut, offset.dy + size.height);
+    path.lineTo(offset.dx + cornerCut, offset.dy + size.height);
+    path.lineTo(offset.dx, offset.dy + size.height - cornerCut);
+    path.lineTo(offset.dx, offset.dy + cornerCut);
     path.close();
+    
     return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldRepaint(ValorantCardPainter oldDelegate) => 
+    oldDelegate.borderColor != borderColor;
+}
+
+class DiamondPainter extends CustomPainter {
+  final Color baseColor;
+  
+  DiamondPainter(this.baseColor);
+  
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final diamondSize = size.width * 0.9;
+    
+    // Draw a more detailed diamond like in the Valorant rank icon
+    _drawValorantDiamond(canvas, center, diamondSize, baseColor);
+  }
+  
+  void _drawValorantDiamond(Canvas canvas, Offset center, double size, Color color) {
+    // Main diamond
+    final diamondPath = Path();
+    
+    // Diamond points
+    final top = Offset(center.dx, center.dy - size / 2);
+    final right = Offset(center.dx + size / 2, center.dy);
+    final bottom = Offset(center.dx, center.dy + size / 2);
+    final left = Offset(center.dx - size / 2, center.dy);
+    
+    diamondPath.moveTo(top.dx, top.dy);
+    diamondPath.lineTo(right.dx, right.dy);
+    diamondPath.lineTo(bottom.dx, bottom.dy);
+    diamondPath.lineTo(left.dx, left.dy);
+    diamondPath.close();
+    
+    // Paint with linear gradient for 3D effect
+    final gradientPaint = Paint()
+      ..shader = ui.Gradient.linear(
+        Offset(center.dx - size / 4, center.dy - size / 4),
+        Offset(center.dx + size / 4, center.dy + size / 4),
+        [
+          color.withOpacity(0.8),
+          color,
+          color.withOpacity(0.6),
+        ],
+        [0.0, 0.5, 1.0]
+      );
+    
+    canvas.drawPath(diamondPath, gradientPaint);
+    
+    // Inner diamond
+    final innerSize = size * 0.5;
+    final innerDiamondPath = Path();
+    
+    // Inner diamond points
+    final innerTop = Offset(center.dx, center.dy - innerSize / 2);
+    final innerRight = Offset(center.dx + innerSize / 2, center.dy);
+    final innerBottom = Offset(center.dx, center.dy + innerSize / 2);
+    final innerLeft = Offset(center.dx - innerSize / 2, center.dy);
+    
+    innerDiamondPath.moveTo(innerTop.dx, innerTop.dy);
+    innerDiamondPath.lineTo(innerRight.dx, innerRight.dy);
+    innerDiamondPath.lineTo(innerBottom.dx, innerBottom.dy);
+    innerDiamondPath.lineTo(innerLeft.dx, innerLeft.dy);
+    innerDiamondPath.close();
+    
+    // Paint with lighter color
+    final innerPaint = Paint()
+      ..color = color.withOpacity(0.5)
+      ..style = PaintingStyle.fill;
+    
+    canvas.drawPath(innerDiamondPath, innerPaint);
+    
+    // Add highlight reflection
+    final highlightPath = Path();
+    final highlightSize = size * 0.3;
+    
+    // Creating a smaller diamond for the highlight
+    final hTop = Offset(center.dx, center.dy - highlightSize / 2);
+    final hRight = Offset(center.dx + highlightSize / 2, center.dy);
+    
+    highlightPath.moveTo(hTop.dx, hTop.dy);
+    highlightPath.lineTo(hRight.dx, hRight.dy);
+    highlightPath.lineTo(center.dx, center.dy);
+    highlightPath.close();
+    
+    // Light reflection
+    final highlightPaint = Paint()
+      ..color = Colors.white.withOpacity(0.7)
+      ..style = PaintingStyle.fill;
+    
+    canvas.drawPath(highlightPath, highlightPaint);
+  }
+  
+  @override
+  bool shouldRepaint(DiamondPainter oldDelegate) => 
+    oldDelegate.baseColor != baseColor;
 }

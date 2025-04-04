@@ -339,6 +339,7 @@ class CardActivityScreen extends StatelessWidget {
                 color: Colors.white,
                 size: 20,
               ),
+              
             ),
             title: Text(
               index % 4 == 0 ? 'Updated your Valorant rank to Diamond' :

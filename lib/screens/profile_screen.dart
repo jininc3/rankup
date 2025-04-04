@@ -62,14 +62,13 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         backgroundColor: DiscordTheme.darkGrey.withOpacity(0.9),
         elevation: 0,
         title: const Text(
-  'ProGamerName',
-  style: TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.w600,
-    color: DiscordTheme.white,
-  ),
-),
-
+          'ProGamerName',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: DiscordTheme.white,
+          ),
+        ),
         actions: [
           // Card Activity button with cleaner icon
           IconButton(
@@ -110,123 +109,146 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               // Profile Header with more white space and modern styling
               SliverToBoxAdapter(
                 child: SafeArea(
-                bottom: false,
-                child: Padding(
-                padding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 20.0),
-                child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-          // Profile picture, stats, name, edit button, etc.
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Profile picture with enhanced border
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Border container
-                              Container(
-                                width: 96,
-                                height: 96,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: const Color(0xFF4A80EB), // Diamond color
-                                    width: 2,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF4A80EB).withOpacity(0.3),
-                                      blurRadius: 8,
-                                      spreadRadius: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // Actual profile image
-                              CircleAvatar(
-                                radius: 44,
-                                backgroundColor: DiscordTheme.darkGrey,
-                                backgroundImage: const AssetImage('assets/images/placeholder.png'),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 24), // More spacing
-                          
-                          // Stats in a single column with bolder text
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _buildStatColumn('7', 'Cards'),
-                                _buildStatColumn('1.2k', 'Followers'),
-                                _buildStatColumn('342', 'Following'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 20), // More spacing
-                      
-                      // User info section with improved typography hierarchy
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          
-                          Text(
-                            'Competitive player since 2015',
-                            style: TextStyle(
-                              color: DiscordTheme.softGrey,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 24), // More spacing
-                      
-                      // Edit profile button with Discord red styling and enhanced appearance
-                      SizedBox(
-                        width: double.infinity,
-                        child: DecoratedBox(
+                  bottom: false,
+                  child: Stack(
+                    children: [
+                      // Background image with improved visibility
+                      Positioned.fill(
+                        child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [
-                              BoxShadow(
-                                color: DiscordTheme.primaryRed.withOpacity(0.2),
-                                blurRadius: 8,
-                                spreadRadius: 0,
-                              ),
-                            ],
+                            color: DiscordTheme.charcoalGrey,
                           ),
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: DiscordTheme.primaryRed, width: 1),
-                              foregroundColor: DiscordTheme.primaryRed,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            onPressed: () {
-                              // Navigate to edit profile
-                            },
-                            child: const Text(
-                              'Edit Profile',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.5,
+                          child: Opacity(
+                            opacity: 0.2, // Increased opacity for better visibility
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: const Image(
+                                image: AssetImage('assets/images/profile2.png'),
+                                fit: BoxFit.cover, // Change to cover to fill the space
+                                width: double.infinity, // Make it full width
                               ),
                             ),
                           ),
                         ),
                       ),
+                      // Profile content
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Profile picture, stats, name, edit button, etc.
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // Profile picture with enhanced border
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Border container
+                                    Container(
+                                      width: 96,
+                                      height: 96,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: const Color(0xFF4A80EB), // Diamond color
+                                          width: 2,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFF4A80EB).withOpacity(0.3),
+                                            blurRadius: 8,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Actual profile image
+                                    CircleAvatar(
+                                      radius: 44,
+                                      backgroundColor: DiscordTheme.darkGrey,
+                                      backgroundImage: const AssetImage('assets/images/placeholder.png'),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(width: 24), // More spacing
+                                
+                                // Stats in a single column with bolder text
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _buildStatColumn('7', 'Cards'),
+                                      _buildStatColumn('1.2k', 'Followers'),
+                                      _buildStatColumn('342', 'Following'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 20), // More spacing
+                            
+                            // User info section with improved typography hierarchy
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Competitive player since 2015',
+                                  style: TextStyle(
+                                    color: DiscordTheme.softGrey,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 24), // More spacing
+                            
+                            // Edit profile button with Discord red styling and enhanced appearance
+                            SizedBox(
+                              width: double.infinity,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: DiscordTheme.primaryRed.withOpacity(0.2),
+                                      blurRadius: 8,
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                child: OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(color: DiscordTheme.primaryRed, width: 1),
+                                    foregroundColor: DiscordTheme.primaryRed,
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    // Navigate to edit profile
+                                  },
+                                  child: const Text(
+                                    'Edit Profile',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
               ),
               
               // Tabs with Discord red styling and improved indicator

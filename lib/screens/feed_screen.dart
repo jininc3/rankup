@@ -38,8 +38,16 @@ class FeedScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
+      body: ListView.separated(
+        // Using ListView.separated to add consistent gaps
         itemCount: 10,
+        // Adding a more distinct separator between items
+        separatorBuilder: (context, index) {
+          return Container(
+            height: 16, // Increased height for more obvious gap
+            color: Colors.black, // Using black for maximum contrast
+          );
+        },
         itemBuilder: (context, index) {
           // Alternate between post types for demo
           if (index % 3 == 0) {
@@ -58,8 +66,22 @@ class FeedScreen extends StatelessWidget {
   Widget _buildPlayerCardPost(BuildContext context, int index) {
     // Instagram-style post with player card
     return Container(
-      color: DiscordColors.charcoalGrey, // Use DiscordColors
-      margin: const EdgeInsets.only(bottom: 8.0),
+      decoration: BoxDecoration(
+        color: DiscordColors.charcoalGrey, // Use DiscordColors
+        // Add a border around each post for clear separation
+        border: Border.all(
+          color: DiscordColors.darkGrey.withOpacity(0.8),
+          width: 2.0, // Thicker border
+        ),
+        // Add subtle shadow for depth
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -358,9 +380,6 @@ class FeedScreen extends StatelessWidget {
               ),
             ),
           ),
-          
-          // Divider between posts
-          Divider(height: 1, color: DiscordColors.darkGrey), // Use DiscordColors
         ],
       ),
     );
@@ -369,8 +388,23 @@ class FeedScreen extends StatelessWidget {
   Widget _buildTextPost(BuildContext context, int index) {
     // Instagram-style text post
     return Container(
-      color: DiscordColors.charcoalGrey, // Use DiscordColors
-      margin: const EdgeInsets.only(bottom: 8.0),
+      decoration: BoxDecoration(
+        color: DiscordColors.charcoalGrey, // Use DiscordColors
+        // Add a border around each post for clear separation
+        border: Border.all(
+          color: DiscordColors.darkGrey.withOpacity(0.8),
+          width: 2.0, // Thicker border
+        ),
+        // Add subtle shadow for depth
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 2), // Small margin to show border clearly
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -501,9 +535,6 @@ class FeedScreen extends StatelessWidget {
               ),
             ),
           ),
-          
-          // Divider between posts
-          Divider(height: 1, color: DiscordColors.darkGrey), // Use DiscordColors
         ],
       ),
     );
@@ -512,8 +543,23 @@ class FeedScreen extends StatelessWidget {
   Widget _buildHighlightClipPost(BuildContext context, int index) {
     // Instagram-style video post
     return Container(
-      color: DiscordColors.charcoalGrey, // Use DiscordColors
-      margin: const EdgeInsets.only(bottom: 8.0),
+      decoration: BoxDecoration(
+        color: DiscordColors.charcoalGrey, // Use DiscordColors
+        // Add a border around each post for clear separation
+        border: Border.all(
+          color: DiscordColors.darkGrey.withOpacity(0.8),
+          width: 2.0, // Thicker border
+        ),
+        // Add subtle shadow for depth
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 2), // Small margin to show border clearly
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -714,9 +760,6 @@ class FeedScreen extends StatelessWidget {
               ),
             ),
           ),
-          
-          // Divider between posts
-          Divider(height: 1, color: DiscordColors.darkGrey), // Use DiscordColors
         ],
       ),
     );
@@ -749,5 +792,14 @@ class FeedScreen extends StatelessWidget {
   }
 }
 
-// Remove the local Discord theme class since we're using the one from game_player_card.dart
-// Use DiscordColors from game_player_card.dart instead
+// For temporary compatibility - assume DiscordColors is defined in game_player_card.dart
+// This class would not be needed if proper imports are set up
+class DiscordColors {
+  static const primaryRed = Color(0xFFED4245);
+  static const darkGrey = Color(0xFF2C2F33);
+  static const charcoalGrey = Color(0xFF23272A);
+  static const lightGrey = Color(0xFFB9BBBE);
+  static const white = Color(0xFFFFFFFF);
+  static const mutedRed = Color(0xFFA83232);
+  static const softGrey = Color(0xFF99AAB5);
+}

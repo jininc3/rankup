@@ -207,42 +207,44 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                             const SizedBox(height: 24), // More spacing
                             
                             // Edit profile button with Discord red styling and enhanced appearance
-                            SizedBox(
-                              width: double.infinity,
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: DiscordTheme.primaryRed.withOpacity(0.2),
-                                      blurRadius: 8,
-                                      spreadRadius: 0,
-                                    ),
-                                  ],
-                                ),
-                                child: OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                    side: const BorderSide(color: DiscordTheme.primaryRed, width: 1),
-                                    foregroundColor: DiscordTheme.primaryRed,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    // Navigate to edit profile
-                                  },
-                                  child: const Text(
-                                    'Edit Profile',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                           SizedBox(
+  width: double.infinity,
+  child: DecoratedBox(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: [
+        BoxShadow(
+          color: DiscordTheme.primaryRed.withOpacity(0.2),
+          blurRadius: 6, // Reduced from 8
+          spreadRadius: 0,
+        ),
+      ],
+    ),
+    child: OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        side: const BorderSide(color: DiscordTheme.primaryRed, width: 1),
+        foregroundColor: DiscordTheme.primaryRed,
+        padding: const EdgeInsets.symmetric(vertical: 6), // Reduced from 12
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        // Add minimumSize to control the minimum height
+        minimumSize: const Size(0, 32), // Set a lower minimum height
+      ),
+      onPressed: () {
+        // Navigate to edit profile
+      },
+      child: const Text(
+        'Edit Profile',
+        style: TextStyle(
+          fontSize: 14, // Slightly reduced font size
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+        ),
+      ),
+    ),
+  ),
+),
                           ],
                         ),
                       ),
@@ -260,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     indicator: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          width: 3.0,
+                          width: 2.0, // Reduced from 3.0
                           color: DiscordTheme.primaryRed,
                         ),
                       ),
@@ -269,17 +271,28 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     unselectedLabelColor: DiscordTheme.softGrey,
                     labelStyle: const TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      letterSpacing: 0.8,
+                      fontSize: 12, // Reduced from 14
+                      letterSpacing: 0.6, // Reduced from 0.8
                     ),
                     unselectedLabelStyle: const TextStyle(
                       fontWeight: FontWeight.normal,
-                      fontSize: 14,
-                      letterSpacing: 0.5,
+                      fontSize: 12, // Reduced from 14
+                      letterSpacing: 0.4, // Reduced from 0.5
                     ),
+                    // Reduced padding in the tabs
+                    padding: const EdgeInsets.symmetric(vertical: 0), // Add this line
+                    indicatorPadding: const EdgeInsets.symmetric(horizontal: 4), // Add this line
                     tabs: const [
-                      Tab(icon: Icon(Icons.grid_view_rounded), text: 'PLAYER CARDS'),
-                      Tab(icon: Icon(Icons.play_circle_outline), text: 'HIGHLIGHTS'),
+                      Tab(
+                        icon: Icon(Icons.grid_view_rounded, size: 18), // Reduced from default size
+                        text: 'PLAYER CARDS',
+                        height: 38, // Reduced from default height
+                      ),
+                      Tab(
+                        icon: Icon(Icons.play_circle_outline, size: 18), // Reduced from default size
+                        text: 'HIGHLIGHTS',
+                        height: 38, // Reduced from default height
+                      ),
                     ],
                   ),
                 ),
@@ -791,10 +804,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
 
   @override
-  double get minExtent => _tabBar.preferredSize.height;
+  double get minExtent => _tabBar.preferredSize.height - 8; // Reduced height
   
   @override
-  double get maxExtent => _tabBar.preferredSize.height;
+  double get maxExtent => _tabBar.preferredSize.height - 8; // Reduced height
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {

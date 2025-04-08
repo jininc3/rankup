@@ -402,11 +402,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                               ),
                               
                               // Game-specific icon (smaller logos for each game)
-                              Positioned(
-                                top: 12,
-                                left: 12,
-                                child: _buildGameLogo(game),
-                              ),
+                             
                             ],
                           ),
                         );

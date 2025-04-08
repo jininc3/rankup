@@ -69,6 +69,9 @@ flutter:
     - assets/images/profile2.png
     - assets/images/profile3.png
     - assets/images/v1.mp4
+    - assets/images/among_us_icon.jpg
+    - assets/images/rick_icon.jpg
+    - assets/images/cartoon_icon.jpg
   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

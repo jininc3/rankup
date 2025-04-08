@@ -2,19 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../widgets/game_player_card.dart';
 
-
-// Use the DiscordColors class from game_player_card.dart instead of attempting to import from theme directory
-// This assumes the class is accessible from game_player_card.dart as shown in your documents
-
 class FeedScreen extends StatelessWidget {
   const FeedScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DiscordColors.charcoalGrey, // Use DiscordColors
+      backgroundColor: DiscordColors.charcoalGrey,
       appBar: AppBar(
-        backgroundColor: DiscordColors.darkGrey, // Use DiscordColors
+        backgroundColor: DiscordColors.darkGrey,
         elevation: 0,
         title: const Text(
           'FEED',
@@ -22,7 +18,7 @@ class FeedScreen extends StatelessWidget {
             letterSpacing: 1.2,
             fontWeight: FontWeight.w600,
             fontSize: 18,
-            color: DiscordColors.white, // Use DiscordColors
+            color: DiscordColors.white,
           ),
         ),
         actions: [
@@ -41,17 +37,14 @@ class FeedScreen extends StatelessWidget {
         ],
       ),
       body: ListView.separated(
-        // Using ListView.separated to add consistent gaps
         itemCount: 10,
-        // Adding a more distinct separator between items
         separatorBuilder: (context, index) {
           return Container(
-            height: 16, // Increased height for more obvious gap
-            color: Colors.black, // Using black for maximum contrast
+            height: 16,
+            color: Colors.black,
           );
         },
         itemBuilder: (context, index) {
-          // Alternate between post types for demo
           if (index % 3 == 0) {
             return _buildPlayerCardPost(context, index);
           } else if (index % 3 == 1) {
@@ -61,21 +54,44 @@ class FeedScreen extends StatelessWidget {
           }
         },
       ),
-      // Removed the bottom navigation bar - it will be provided by the parent widget
+    );
+  }
+
+  // Get the appropriate profile image based on type
+  Widget _getProfileImage(String type) {
+    String imagePath;
+    switch (type.toLowerCase()) {
+      case 'f':
+        imagePath = 'assets/images/among_us_icon.jpg'; // Image 1
+        break;
+      case 'p':
+        imagePath = 'assets/images/rick_icon.jpg'; // Image 2
+        break;
+      case 'c':
+        imagePath = 'assets/images/cartoon_icon.jpg'; // Image 3
+        break;
+      default:
+        imagePath = 'assets/images/among_us_icon.jpg';
+    }
+    
+    return ClipOval(
+      child: Image.asset(
+        imagePath,
+        width: 32,
+        height: 32,
+        fit: BoxFit.cover,
+      ),
     );
   }
 
   Widget _buildPlayerCardPost(BuildContext context, int index) {
-    // Instagram-style post with player card
     return Container(
       decoration: BoxDecoration(
-        color: DiscordColors.charcoalGrey, // Use DiscordColors
-        // Add a border around each post for clear separation
+        color: DiscordColors.charcoalGrey,
         border: Border.all(
           color: DiscordColors.darkGrey.withOpacity(0.8),
-          width: 2.0, // Thicker border
+          width: 2.0,
         ),
-        // Add subtle shadow for depth
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -87,25 +103,13 @@ class FeedScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Post header with username and time
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               children: [
-                // User avatar
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: DiscordColors.darkGrey, // Use DiscordColors
-                  child: Text(
-                    'F',
-                    style: const TextStyle(
-                      color: DiscordColors.primaryRed, // Use DiscordColors
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                // Replace CircleAvatar with profile image
+                _getProfileImage('F'),
                 const SizedBox(width: 8),
-                // Username and time
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -114,20 +118,19 @@ class FeedScreen extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: DiscordColors.white, // Use DiscordColors
+                        color: DiscordColors.white,
                       ),
                     ),
                     Text(
                       '${(index % 8) + 1}h ago',
                       style: const TextStyle(
-                        color: DiscordColors.softGrey, // Use DiscordColors
+                        color: DiscordColors.softGrey,
                         fontSize: 12,
                       ),
                     ),
                   ],
                 ),
                 const Spacer(),
-                // More options button
                 IconButton(
                   icon: const Icon(Icons.more_horiz, color: DiscordColors.white),
                   iconSize: 20,
@@ -137,25 +140,22 @@ class FeedScreen extends StatelessWidget {
             ),
           ),
           
-          // Post caption
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               'Just updated my ${index % 2 == 0 ? "Valorant" : "League of Legends"} card!',
               style: const TextStyle(
                 fontSize: 14,
-                color: DiscordColors.white, // Use DiscordColors
+                color: DiscordColors.white,
               ),
             ),
           ),
           
           const SizedBox(height: 8),
           
-          // Game card - now integrated as part of the post, not as a separate widget
-          // This lets us match the Instagram style more closely
           Container(
             decoration: BoxDecoration(
-              color: DiscordColors.darkGrey, // Use DiscordColors
+              color: DiscordColors.darkGrey,
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -166,36 +166,26 @@ class FeedScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // Game card header with user info
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
                     children: [
-                      CircleAvatar(
-                        radius: 14,
-                        backgroundColor: DiscordColors.charcoalGrey.withOpacity(0.7), // Use DiscordColors
-                        child: Text(
-                          'F',
-                          style: const TextStyle(
-                            color: DiscordColors.white, // Use DiscordColors
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
+                      // Replace CircleAvatar with profile image
+                      _getProfileImage('F'),
                       const SizedBox(width: 8),
                       Text(
                         'FPS_Master${index * 3}',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
-                          color: DiscordColors.white, // Use DiscordColors
+                          color: DiscordColors.white,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         index % 2 == 0 ? 'Valorant' : 'League of Legends',
                         style: const TextStyle(
-                          color: DiscordColors.lightGrey, // Use DiscordColors
+                          color: DiscordColors.lightGrey,
                           fontSize: 12,
                         ),
                       ),
@@ -210,28 +200,25 @@ class FeedScreen extends StatelessWidget {
                   ),
                 ),
                 
-                // Game card content
                 SizedBox(
                   height: 220,
                   child: Stack(
                     children: [
-                      // Center icon
                       Center(
                         child: Icon(
                           index % 2 == 0 ? Icons.gps_fixed : Icons.shield,
                           size: 80,
-                          color: DiscordColors.white.withOpacity(0.3), // Use DiscordColors
+                          color: DiscordColors.white.withOpacity(0.3),
                         ),
                       ),
                       
-                      // Country badge
                       Positioned(
                         top: 12,
                         left: 12,
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: DiscordColors.charcoalGrey.withOpacity(0.6), // Use DiscordColors
+                            color: DiscordColors.charcoalGrey.withOpacity(0.6),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -240,13 +227,13 @@ class FeedScreen extends StatelessWidget {
                               Icon(
                                 Icons.public,
                                 size: 14,
-                                color: DiscordColors.lightGrey, // Use DiscordColors
+                                color: DiscordColors.lightGrey,
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 index % 3 == 0 ? 'USA' : (index % 3 == 1 ? 'Canada' : 'UK'),
                                 style: const TextStyle(
-                                  color: DiscordColors.lightGrey, // Use DiscordColors
+                                  color: DiscordColors.lightGrey,
                                   fontSize: 12,
                                 ),
                               ),
@@ -255,14 +242,13 @@ class FeedScreen extends StatelessWidget {
                         ),
                       ),
                       
-                      // Rank badge
                       Positioned(
                         top: 12,
                         right: 12,
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: DiscordColors.charcoalGrey.withOpacity(0.6), // Use DiscordColors
+                            color: DiscordColors.charcoalGrey.withOpacity(0.6),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -299,7 +285,6 @@ class FeedScreen extends StatelessWidget {
             ),
           ),
           
-          // Post interaction buttons - Instagram style
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -325,25 +310,23 @@ class FeedScreen extends StatelessWidget {
             ),
           ),
           
-          // Likes count
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               '267 likes',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                color: DiscordColors.white, // Use DiscordColors
+                color: DiscordColors.white,
                 fontSize: 14,
               ),
             ),
           ),
           
-          // Caption with username and bio
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
             child: RichText(
               text: const TextSpan(
-                style: TextStyle(fontSize: 14, color: DiscordColors.white), // Use DiscordColors
+                style: TextStyle(fontSize: 14, color: DiscordColors.white),
                 children: [
                   TextSpan(
                     text: 'FPS_Master ',
@@ -357,7 +340,6 @@ class FeedScreen extends StatelessWidget {
             ),
           ),
           
-          // Main characters as hashtags
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 8.0),
             child: Text(
@@ -365,19 +347,18 @@ class FeedScreen extends StatelessWidget {
                 ? '#Jett #Reyna #Sage' 
                 : '#Ahri #Lux #Jinx',
               style: const TextStyle(
-                color: DiscordColors.primaryRed, // Use DiscordColors red
+                color: DiscordColors.primaryRed,
                 fontSize: 14,
               ),
             ),
           ),
           
-          // Time indicator
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
             child: Text(
               '2 hours ago',
               style: TextStyle(
-                color: DiscordColors.softGrey, // Use DiscordColors
+                color: DiscordColors.softGrey,
                 fontSize: 12,
               ),
             ),
@@ -388,16 +369,13 @@ class FeedScreen extends StatelessWidget {
   }
 
   Widget _buildTextPost(BuildContext context, int index) {
-    // Instagram-style text post
     return Container(
       decoration: BoxDecoration(
-        color: DiscordColors.charcoalGrey, // Use DiscordColors
-        // Add a border around each post for clear separation
+        color: DiscordColors.charcoalGrey,
         border: Border.all(
           color: DiscordColors.darkGrey.withOpacity(0.8),
-          width: 2.0, // Thicker border
+          width: 2.0,
         ),
-        // Add subtle shadow for depth
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -406,29 +384,17 @@ class FeedScreen extends StatelessWidget {
           ),
         ],
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 2), // Small margin to show border clearly
+      margin: const EdgeInsets.symmetric(horizontal: 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Post header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               children: [
-                // User avatar
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: DiscordColors.darkGrey, // Use DiscordColors
-                  child: Text(
-                    'P',
-                    style: const TextStyle(
-                      color: DiscordColors.primaryRed, // Use DiscordColors
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                // Replace CircleAvatar with profile image
+                _getProfileImage('P'),
                 const SizedBox(width: 8),
-                // Username and time
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -437,20 +403,19 @@ class FeedScreen extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: DiscordColors.white, // Use DiscordColors
+                        color: DiscordColors.white,
                       ),
                     ),
                     Text(
                       '${(index % 6) + 2}h ago',
                       style: const TextStyle(
-                        color: DiscordColors.softGrey, // Use DiscordColors
+                        color: DiscordColors.softGrey,
                         fontSize: 12,
                       ),
                     ),
                   ],
                 ),
                 const Spacer(),
-                // More options button
                 IconButton(
                   icon: const Icon(Icons.more_horiz, color: DiscordColors.white),
                   iconSize: 20,
@@ -460,34 +425,31 @@ class FeedScreen extends StatelessWidget {
             ),
           ),
           
-          // Text post content
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
-            color: DiscordColors.darkGrey, // Use DiscordColors
+            color: DiscordColors.darkGrey,
             child: const Text(
               'Looking for a Diamond+ support main for duo queue tonight. Must have mic and good comms. DM me if interested!',
               style: TextStyle(
                 fontSize: 16,
-                color: DiscordColors.white, // Use DiscordColors
+                color: DiscordColors.white,
                 height: 1.4,
               ),
             ),
           ),
           
-          // Tags as Instagram-style hashtags
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
               '#Diamond #Support #VoiceComms',
               style: TextStyle(
-                color: DiscordColors.primaryRed, // Use DiscordColors
+                color: DiscordColors.primaryRed,
                 fontSize: 14,
               ),
             ),
           ),
           
-          // Post interaction buttons - Instagram style
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -513,26 +475,24 @@ class FeedScreen extends StatelessWidget {
             ),
           ),
           
-          // Likes count
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               '${42 + index * 7} likes',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                color: DiscordColors.white, // Use DiscordColors
+                color: DiscordColors.white,
                 fontSize: 14,
               ),
             ),
           ),
           
-          // Time indicator
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
             child: Text(
               '${(index % 6) + 2} hours ago',
               style: const TextStyle(
-                color: DiscordColors.softGrey, // Use DiscordColors
+                color: DiscordColors.softGrey,
                 fontSize: 12,
               ),
             ),
@@ -543,219 +503,195 @@ class FeedScreen extends StatelessWidget {
   }
 
   Widget _buildHighlightClipPost(BuildContext context, int index) {
-  // Instagram-style video post
-  return Container(
-    decoration: BoxDecoration(
-      color: DiscordColors.charcoalGrey, // Use DiscordColors
-      // Add a border around each post for clear separation
-      border: Border.all(
-        color: DiscordColors.darkGrey.withOpacity(0.8),
-        width: 2.0, // Thicker border
+    return Container(
+      decoration: BoxDecoration(
+        color: DiscordColors.charcoalGrey,
+        border: Border.all(
+          color: DiscordColors.darkGrey.withOpacity(0.8),
+          width: 2.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      // Add subtle shadow for depth
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.3),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    margin: const EdgeInsets.symmetric(horizontal: 2), // Small margin to show border clearly
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Post header
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            children: [
-              // User avatar
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: DiscordColors.darkGrey, // Use DiscordColors
-                child: Text(
-                  'C',
-                  style: const TextStyle(
-                    color: DiscordColors.primaryRed, // Use DiscordColors
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Username and time
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'ClipMaster${index * 5}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: DiscordColors.white, // Use DiscordColors
-                    ),
-                  ),
-                  Text(
-                    '${(index % 24) + 1}h ago',
-                    style: const TextStyle(
-                      color: DiscordColors.softGrey, // Use DiscordColors
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              // More options button
-              IconButton(
-                icon: const Icon(Icons.more_horiz, color: DiscordColors.white),
-                iconSize: 20,
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
-        
-        // Video post content
-       Container(
-  width: double.infinity,
-  height: MediaQuery.of(context).size.width, // Make height equal to width for 1:1 ratio
-  child: FeedVideoPlayer(
-    videoUrl: 'assets/images/v1.mp4',
-  ),
-),
-        
-        // Post interaction buttons - Instagram style
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.favorite_border, color: DiscordColors.white),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.chat_bubble_outline, color: DiscordColors.white),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.send_outlined, color: DiscordColors.white),
-                onPressed: () {},
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.bookmark_border, color: DiscordColors.white),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
-        
-        // Likes and views
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${(index + 1) * 124} views',
-                style: const TextStyle(
-                  color: DiscordColors.white, // Use DiscordColors
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                '${(index + 1) * 23} likes',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: DiscordColors.white, // Use DiscordColors
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ),
-        
-        // Caption with username
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
-          child: RichText(
-            text: TextSpan(
-              style: const TextStyle(fontSize: 14, color: DiscordColors.white), // Use DiscordColors
+      margin: const EdgeInsets.symmetric(horizontal: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
               children: [
-                TextSpan(
-                  text: 'ClipMaster${index * 5} ',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                // Replace CircleAvatar with profile image
+                _getProfileImage('C'),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ClipMaster${index * 5}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: DiscordColors.white,
+                      ),
+                    ),
+                    Text(
+                      '${(index % 24) + 1}h ago',
+                      style: const TextStyle(
+                        color: DiscordColors.softGrey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
-                TextSpan(
-                  text: index % 2 == 0 
-                    ? 'Clutched a 1v5 in Valorant! Check this out!' 
-                    : 'My best play this season! #BronzeToRadiant',
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.more_horiz, color: DiscordColors.white),
+                  iconSize: 20,
+                  onPressed: () {},
                 ),
               ],
             ),
           ),
-        ),
-        
-        // Hashtags
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 8.0),
-          child: Text(
-            index % 2 == 0 
-              ? '#Clutch #Valorant #Gaming' 
-              : '#BronzeToRadiant #GrindTime',
-            style: TextStyle(
-              color: DiscordColors.primaryRed, // Use DiscordColors
-              fontSize: 14,
+          
+          Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.width,
+            child: FeedVideoPlayer(
+              videoUrl: 'assets/images/v1.mp4',
             ),
           ),
-        ),
-        
-        // Time indicator
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-          child: Text(
-            '${(index % 24) + 1} hours ago',
-            style: const TextStyle(
-              color: DiscordColors.softGrey, // Use DiscordColors
-              fontSize: 12,
+          
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.favorite_border, color: DiscordColors.white),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: const Icon(Icons.chat_bubble_outline, color: DiscordColors.white),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send_outlined, color: DiscordColors.white),
+                  onPressed: () {},
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.bookmark_border, color: DiscordColors.white),
+                  onPressed: () {},
+                ),
+              ],
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+          
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${(index + 1) * 124} views',
+                  style: const TextStyle(
+                    color: DiscordColors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${(index + 1) * 23} likes',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: DiscordColors.white,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
+            child: RichText(
+              text: TextSpan(
+                style: const TextStyle(fontSize: 14, color: DiscordColors.white),
+                children: [
+                  TextSpan(
+                    text: 'ClipMaster${index * 5} ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text: index % 2 == 0 
+                      ? 'Clutched a 1v5 in Valorant! Check this out!' 
+                      : 'My best play this season! #BronzeToRadiant',
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 8.0),
+            child: Text(
+              index % 2 == 0 
+                ? '#Clutch #Valorant #Gaming' 
+                : '#BronzeToRadiant #GrindTime',
+              style: TextStyle(
+                color: DiscordColors.primaryRed,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+            child: Text(
+              '${(index % 24) + 1} hours ago',
+              style: const TextStyle(
+                color: DiscordColors.softGrey,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   
   Color _getRankColor(String rank) {
-    // Match colors to Valorant rank colors
     switch (rank.toLowerCase()) {
       case 'iron':
-        return const Color(0xFF7C8792); // Grey
+        return const Color(0xFF7C8792);
       case 'bronze':
-        return const Color(0xFFAD7F47); // Bronze
+        return const Color(0xFFAD7F47);
       case 'silver':
-        return const Color(0xFFAFB8C4); // Silver
+        return const Color(0xFFAFB8C4);
       case 'gold':
-        return const Color(0xFFECCE52); // Gold
+        return const Color(0xFFECCE52);
       case 'platinum':
-        return const Color(0xFF47B986); // Teal
+        return const Color(0xFF47B986);
       case 'diamond':
-        return const Color(0xFF4A80EB); // Blue (adjusted to match image)
+        return const Color(0xFF4A80EB);
       case 'ascendant':
-        return const Color(0xFF44CE9C); // Green
+        return const Color(0xFF44CE9C);
       case 'immortal':
-        return const Color(0xFFBF4D4D); // Red
+        return const Color(0xFFBF4D4D);
       case 'radiant':
-        return const Color(0xFFFFD700); // Gold/Yellow
+        return const Color(0xFFFFD700);
       default:
-        return DiscordColors.primaryRed; // Discord red default
+        return DiscordColors.primaryRed;
     }
   }
 }
 
 // For temporary compatibility - assume DiscordColors is defined in game_player_card.dart
-// This class would not be needed if proper imports are set up
 class DiscordColors {
   static const primaryRed = Color(0xFFED4245);
   static const darkGrey = Color(0xFF2C2F33);
@@ -765,7 +701,6 @@ class DiscordColors {
   static const mutedRed = Color(0xFFA83232);
   static const softGrey = Color(0xFF99AAB5);
 }
-
 
 class FeedVideoPlayer extends StatefulWidget {
   final String videoUrl;
@@ -805,11 +740,9 @@ class _FeedVideoPlayerState extends State<FeedVideoPlayer> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Use SizedBox.expand to make the video fill its container
-                // Then use FittedBox with BoxFit.cover to preserve aspect ratio while filling
                 SizedBox.expand(
                   child: FittedBox(
-                    fit: BoxFit.cover, // This will cover the entire area, potentially cropping some content
+                    fit: BoxFit.cover,
                     child: SizedBox(
                       width: _controller.value.size.width,
                       height: _controller.value.size.height,

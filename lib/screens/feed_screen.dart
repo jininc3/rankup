@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import '../widgets/game_player_card.dart';
+
 
 // Use the DiscordColors class from game_player_card.dart instead of attempting to import from theme directory
 // This assumes the class is accessible from game_player_card.dart as shown in your documents
@@ -541,229 +543,189 @@ class FeedScreen extends StatelessWidget {
   }
 
   Widget _buildHighlightClipPost(BuildContext context, int index) {
-    // Instagram-style video post
-    return Container(
-      decoration: BoxDecoration(
-        color: DiscordColors.charcoalGrey, // Use DiscordColors
-        // Add a border around each post for clear separation
-        border: Border.all(
-          color: DiscordColors.darkGrey.withOpacity(0.8),
-          width: 2.0, // Thicker border
-        ),
-        // Add subtle shadow for depth
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+  // Instagram-style video post
+  return Container(
+    decoration: BoxDecoration(
+      color: DiscordColors.charcoalGrey, // Use DiscordColors
+      // Add a border around each post for clear separation
+      border: Border.all(
+        color: DiscordColors.darkGrey.withOpacity(0.8),
+        width: 2.0, // Thicker border
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 2), // Small margin to show border clearly
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Post header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              children: [
-                // User avatar
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: DiscordColors.darkGrey, // Use DiscordColors
-                  child: Text(
-                    'C',
-                    style: const TextStyle(
-                      color: DiscordColors.primaryRed, // Use DiscordColors
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Username and time
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'ClipMaster${index * 5}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: DiscordColors.white, // Use DiscordColors
-                      ),
-                    ),
-                    Text(
-                      '${(index % 24) + 1}h ago',
-                      style: const TextStyle(
-                        color: DiscordColors.softGrey, // Use DiscordColors
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                // More options button
-                IconButton(
-                  icon: const Icon(Icons.more_horiz, color: DiscordColors.white),
-                  iconSize: 20,
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
-          
-          // Video post content
-          AspectRatio(
-            aspectRatio: 1, // Instagram-like square video
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  color: DiscordColors.darkGrey, // Use DiscordColors
-                ),
-                // Play button
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: DiscordColors.primaryRed.withOpacity(0.3), // Use DiscordColors
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: DiscordColors.white,
-                      width: 2,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.play_arrow,
-                    size: 40,
-                    color: DiscordColors.white, // Use DiscordColors
-                  ),
-                ),
-                // Video duration
-                Positioned(
-                  bottom: 12,
-                  right: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: DiscordColors.charcoalGrey.withOpacity(0.7), // Use DiscordColors
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      '0:${30 + index * 7}',
-                      style: const TextStyle(
-                        color: DiscordColors.white, // Use DiscordColors
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          // Post interaction buttons - Instagram style
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.favorite_border, color: DiscordColors.white),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: const Icon(Icons.chat_bubble_outline, color: DiscordColors.white),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send_outlined, color: DiscordColors.white),
-                  onPressed: () {},
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.bookmark_border, color: DiscordColors.white),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
-          
-          // Likes and views
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${(index + 1) * 124} views',
+      // Add subtle shadow for depth
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.3),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    margin: const EdgeInsets.symmetric(horizontal: 2), // Small margin to show border clearly
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Post header
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            children: [
+              // User avatar
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: DiscordColors.darkGrey, // Use DiscordColors
+                child: Text(
+                  'C',
                   style: const TextStyle(
-                    color: DiscordColors.white, // Use DiscordColors
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${(index + 1) * 23} likes',
-                  style: const TextStyle(
+                    color: DiscordColors.primaryRed, // Use DiscordColors
                     fontWeight: FontWeight.bold,
-                    color: DiscordColors.white, // Use DiscordColors
-                    fontSize: 14,
                   ),
                 ),
-              ],
-            ),
-          ),
-          
-          // Caption with username
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
-            child: RichText(
-              text: TextSpan(
-                style: const TextStyle(fontSize: 14, color: DiscordColors.white), // Use DiscordColors
+              ),
+              const SizedBox(width: 8),
+              // Username and time
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextSpan(
-                    text: 'ClipMaster${index * 5} ',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    'ClipMaster${index * 5}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: DiscordColors.white, // Use DiscordColors
+                    ),
                   ),
-                  TextSpan(
-                    text: index % 2 == 0 
-                      ? 'Clutched a 1v5 in Valorant! Check this out!' 
-                      : 'My best play this season! #BronzeToRadiant',
+                  Text(
+                    '${(index % 24) + 1}h ago',
+                    style: const TextStyle(
+                      color: DiscordColors.softGrey, // Use DiscordColors
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
-            ),
-          ),
-          
-          // Hashtags
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 8.0),
-            child: Text(
-              index % 2 == 0 
-                ? '#Clutch #Valorant #Gaming' 
-                : '#BronzeToRadiant #GrindTime',
-              style: TextStyle(
-                color: DiscordColors.primaryRed, // Use DiscordColors
-                fontSize: 14,
+              const Spacer(),
+              // More options button
+              IconButton(
+                icon: const Icon(Icons.more_horiz, color: DiscordColors.white),
+                iconSize: 20,
+                onPressed: () {},
               ),
-            ),
+            ],
           ),
-          
-          // Time indicator
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-            child: Text(
-              '${(index % 24) + 1} hours ago',
-              style: const TextStyle(
-                color: DiscordColors.softGrey, // Use DiscordColors
-                fontSize: 12,
+        ),
+        
+        // Video post content
+       Container(
+  width: double.infinity,
+  height: MediaQuery.of(context).size.width, // Make height equal to width for 1:1 ratio
+  child: FeedVideoPlayer(
+    videoUrl: 'assets/images/v1.mp4',
+  ),
+),
+        
+        // Post interaction buttons - Instagram style
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.favorite_border, color: DiscordColors.white),
+                onPressed: () {},
               ),
+              IconButton(
+                icon: const Icon(Icons.chat_bubble_outline, color: DiscordColors.white),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.send_outlined, color: DiscordColors.white),
+                onPressed: () {},
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.bookmark_border, color: DiscordColors.white),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+        
+        // Likes and views
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${(index + 1) * 124} views',
+                style: const TextStyle(
+                  color: DiscordColors.white, // Use DiscordColors
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${(index + 1) * 23} likes',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: DiscordColors.white, // Use DiscordColors
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        // Caption with username
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(fontSize: 14, color: DiscordColors.white), // Use DiscordColors
+              children: [
+                TextSpan(
+                  text: 'ClipMaster${index * 5} ',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: index % 2 == 0 
+                    ? 'Clutched a 1v5 in Valorant! Check this out!' 
+                    : 'My best play this season! #BronzeToRadiant',
+                ),
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+        
+        // Hashtags
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 8.0),
+          child: Text(
+            index % 2 == 0 
+              ? '#Clutch #Valorant #Gaming' 
+              : '#BronzeToRadiant #GrindTime',
+            style: TextStyle(
+              color: DiscordColors.primaryRed, // Use DiscordColors
+              fontSize: 14,
+            ),
+          ),
+        ),
+        
+        // Time indicator
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+          child: Text(
+            '${(index % 24) + 1} hours ago',
+            style: const TextStyle(
+              color: DiscordColors.softGrey, // Use DiscordColors
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
   
   Color _getRankColor(String rank) {
     // Match colors to Valorant rank colors
@@ -802,4 +764,72 @@ class DiscordColors {
   static const white = Color(0xFFFFFFFF);
   static const mutedRed = Color(0xFFA83232);
   static const softGrey = Color(0xFF99AAB5);
+}
+
+
+class FeedVideoPlayer extends StatefulWidget {
+  final String videoUrl;
+  const FeedVideoPlayer({super.key, required this.videoUrl});
+
+  @override
+  State<FeedVideoPlayer> createState() => _FeedVideoPlayerState();
+}
+
+class _FeedVideoPlayerState extends State<FeedVideoPlayer> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.asset(widget.videoUrl)
+      ..initialize().then((_) {
+        setState(() {});
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _controller.value.isInitialized
+        ? GestureDetector(
+            onTap: () {
+              setState(() {
+                _controller.value.isPlaying ? _controller.pause() : _controller.play();
+              });
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Use SizedBox.expand to make the video fill its container
+                // Then use FittedBox with BoxFit.cover to preserve aspect ratio while filling
+                SizedBox.expand(
+                  child: FittedBox(
+                    fit: BoxFit.cover, // This will cover the entire area, potentially cropping some content
+                    child: SizedBox(
+                      width: _controller.value.size.width,
+                      height: _controller.value.size.height,
+                      child: VideoPlayer(_controller),
+                    ),
+                  ),
+                ),
+                if (!_controller.value.isPlaying)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: DiscordColors.primaryRed.withOpacity(0.3),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: DiscordColors.white, width: 2),
+                    ),
+                    child: const Icon(Icons.play_arrow, size: 40, color: DiscordColors.white),
+                  ),
+              ],
+            ),
+          )
+        : const Center(child: CircularProgressIndicator());
+  }
 }

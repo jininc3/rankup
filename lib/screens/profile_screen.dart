@@ -24,30 +24,32 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   
   // Scroll controller to track card scrolling position
   final ScrollController _cardsScrollController = ScrollController();
-  bool _showScrollIndicator = true;
+  
+  // Arrow visibility flags
+  bool _showLeftArrow = false;
+  bool _showRightArrow = true;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     
-    // Listen to scroll events to hide/show scroll indicator
-    _cardsScrollController.addListener(() {
-      if (_cardsScrollController.position.pixels > 20 && _showScrollIndicator) {
-        setState(() {
-          _showScrollIndicator = false;
-        });
-      } else if (_cardsScrollController.position.pixels <= 20 && !_showScrollIndicator) {
-        setState(() {
-          _showScrollIndicator = true;
-        });
-      }
+    // Add listener to hide/show arrows
+    _cardsScrollController.addListener(_updateArrowVisibility);
+  }
+  
+  void _updateArrowVisibility() {
+    final position = _cardsScrollController.position;
+    setState(() {
+      _showLeftArrow = position.pixels > 10;
+      _showRightArrow = position.pixels < position.maxScrollExtent - 10;
     });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _cardsScrollController.removeListener(_updateArrowVisibility);
     _cardsScrollController.dispose();
     super.dispose();
   }
@@ -350,15 +352,15 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             // Horizontal scrolling cards with more padding
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 420, // Increased height for cards with margins
+                height: 520, // Increased height for cards with margins
                 child: Stack(
                   children: [
                     // Actual card list
                     ListView.builder(
                       controller: _cardsScrollController,
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.only(left: 16, right: 32),
-                      physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.zero, // Remove padding
+                      physics: const PageScrollPhysics(), // Change to page scrolling
                       itemCount: 7,
                       itemBuilder: (context, index) {
                         String game = index % 3 == 0 ? 'League of Legends' :
@@ -379,13 +381,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         String country = index % 3 == 0 ? 'USA' : 
                                        index % 3 == 1 ? 'Canada' : 'UK';
                         
-                        // If it's the first card, add a "New" badge
-                        bool isNew = index == 0;
-                        
                         // Add card with improved appearance
                         return Container(
-                          width: 300,
-                          margin: const EdgeInsets.fromLTRB(8.0, 24.0, 8.0, 16.0),
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Stack(
                             clipBehavior: Clip.none,
                             children: [
@@ -402,35 +401,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                                 },
                               ),
                               
-                              // The "New" badge for the first card only
-                              if (isNew)
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: DiscordTheme.primaryRed,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: DiscordTheme.primaryRed.withOpacity(0.4),
-                                          blurRadius: 6,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Text(
-                                      'NEW',
-                                      style: TextStyle(
-                                        color: DiscordTheme.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              
                               // Game-specific icon (smaller logos for each game)
                               Positioned(
                                 top: 12,
@@ -443,13 +413,15 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                       },
                     ),
                     
-                    // Scrolling indicator (when cards are available)
-                    if (_showScrollIndicator)
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: 32,
+                    // Right arrow (always shown when there are more cards)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: 32,
+                      child: AnimatedOpacity(
+                        opacity: _showRightArrow ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 200),
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -462,15 +434,66 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                               ],
                             ),
                           ),
-                          child: const Center(
-                            child: Icon(
+                          child: IconButton(
+                            icon: const Icon(
                               Icons.chevron_right,
                               color: DiscordTheme.white,
                               size: 24,
                             ),
+                            onPressed: _showRightArrow ? () {
+                              // Scroll to the next card
+                              final nextPosition = _cardsScrollController.position.pixels + MediaQuery.of(context).size.width;
+                              _cardsScrollController.animateTo(
+                                nextPosition,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            } : null,
                           ),
                         ),
                       ),
+                    ),
+                    
+                    // Left arrow
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: 32,
+                      child: AnimatedOpacity(
+                        opacity: _showLeftArrow ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerRight,
+                              end: Alignment.centerLeft,
+                              colors: [
+                                Colors.transparent,
+                                DiscordTheme.primaryRed.withOpacity(0.1),
+                                DiscordTheme.primaryRed.withOpacity(0.2),
+                              ],
+                            ),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.chevron_left,
+                              color: DiscordTheme.white,
+                              size: 24,
+                            ),
+                            onPressed: _showLeftArrow ? () {
+                              // Scroll to the previous card
+                              final prevPosition = _cardsScrollController.position.pixels - MediaQuery.of(context).size.width;
+                              _cardsScrollController.animateTo(
+                                prevPosition.clamp(0.0, _cardsScrollController.position.maxScrollExtent),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            } : null,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

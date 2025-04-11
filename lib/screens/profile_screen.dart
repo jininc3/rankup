@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import '../widgets/game_player_card.dart';
-import '../widgets/flippable_player_card.dart';
-import '../widgets/player_card_back.dart';
-import '../widgets/game_player_card.dart';
-
 
 // Define the Discord Red & Grey theme colors
 class DiscordTheme {
@@ -25,36 +22,17 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
-  // Scroll controller to track card scrolling position
-  final ScrollController _cardsScrollController = ScrollController();
-  
-  // Arrow visibility flags
-  bool _showLeftArrow = false;
-  bool _showRightArrow = true;
 
   @override
   void initState() {
     super.initState();
+    // Now we have two tabs - Highlights and My Feed
     _tabController = TabController(length: 2, vsync: this);
-    
-    // Add listener to hide/show arrows
-    _cardsScrollController.addListener(_updateArrowVisibility);
-  }
-  
-  void _updateArrowVisibility() {
-    final position = _cardsScrollController.position;
-    setState(() {
-      _showLeftArrow = position.pixels > 10;
-      _showRightArrow = position.pixels < position.maxScrollExtent - 10;
-    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _cardsScrollController.removeListener(_updateArrowVisibility);
-    _cardsScrollController.dispose();
     super.dispose();
   }
 
@@ -81,10 +59,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             icon: const Icon(Icons.history_outlined, color: DiscordTheme.lightGrey),
             tooltip: 'Card Activity',
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CardActivityScreen()),
-              );
+              // Navigate to the card activity screen
+              // When we create that component, we'll uncomment this
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => const CardActivityScreen()),
+              // );
             },
           ),
           // Settings button with more modern icon
@@ -127,12 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           child: Opacity(
                             opacity: 0.2, // Increased opacity for better visibility
                             child: Container(
-                              alignment: Alignment.center,
-                              child: const Image(
-                                image: AssetImage('assets/images/profile2.png'),
-                                fit: BoxFit.cover, // Change to cover to fill the space
-                                width: double.infinity, // Make it full width
-                              ),
+                              
                             ),
                           ),
                         ),
@@ -214,43 +189,43 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                             
                             // Edit profile button with Discord red styling and enhanced appearance
                            SizedBox(
-  width: double.infinity,
-  child: DecoratedBox(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-      boxShadow: [
-        BoxShadow(
-          color: DiscordTheme.primaryRed.withOpacity(0.2),
-          blurRadius: 6, // Reduced from 8
-          spreadRadius: 0,
-        ),
-      ],
-    ),
-    child: OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: DiscordTheme.primaryRed, width: 1),
-        foregroundColor: DiscordTheme.primaryRed,
-        padding: const EdgeInsets.symmetric(vertical: 6), // Reduced from 12
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        // Add minimumSize to control the minimum height
-        minimumSize: const Size(0, 32), // Set a lower minimum height
-      ),
-      onPressed: () {
-        // Navigate to edit profile
-      },
-      child: const Text(
-        'Edit Profile',
-        style: TextStyle(
-          fontSize: 14, // Slightly reduced font size
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0.5,
-        ),
-      ),
-    ),
-  ),
-),
+                              width: double.infinity,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: DiscordTheme.primaryRed.withOpacity(0.2),
+                                      blurRadius: 6, // Reduced from 8
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                child: OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(color: DiscordTheme.primaryRed, width: 1),
+                                    foregroundColor: DiscordTheme.primaryRed,
+                                    padding: const EdgeInsets.symmetric(vertical: 6), // Reduced from 12
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    // Add minimumSize to control the minimum height
+                                    minimumSize: const Size(0, 32), // Set a lower minimum height
+                                  ),
+                                  onPressed: () {
+                                    // Navigate to edit profile
+                                  },
+                                  child: const Text(
+                                    'Edit Profile',
+                                    style: TextStyle(
+                                      fontSize: 14, // Slightly reduced font size
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -259,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 ),
               ),
               
-              // Tabs with Discord red styling and improved indicator
+              // Two tabs: Highlights and My Feed
               SliverPersistentHeader(
                 delegate: _SliverAppBarDelegate(
                   TabBar(
@@ -290,13 +265,13 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     indicatorPadding: const EdgeInsets.symmetric(horizontal: 4), // Add this line
                     tabs: const [
                       Tab(
-                        icon: Icon(Icons.grid_view_rounded, size: 18), // Reduced from default size
-                        text: 'PLAYER CARDS',
+                        icon: Icon(Icons.play_circle_outline, size: 18), // Reduced from default size
+                        text: 'HIGHLIGHTS',
                         height: 38, // Reduced from default height
                       ),
                       Tab(
-                        icon: Icon(Icons.play_circle_outline, size: 18), // Reduced from default size
-                        text: 'HIGHLIGHTS',
+                        icon: Icon(Icons.dynamic_feed, size: 18), // Added feed icon
+                        text: 'MY FEED',
                         height: 38, // Reduced from default height
                       ),
                     ],
@@ -306,12 +281,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ),
             ];
           },
-          // TabBarView with modern styling
+          // TabBarView with two tabs: highlights and my feed
           body: TabBarView(
             controller: _tabController,
             children: [
-              _buildPlayerCardsTab(),
               _buildHighlightsTab(),
+              _buildMyFeedTab(),
             ],
           ),
         ),
@@ -342,203 +317,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       ],
     );
   }
-
- // This is the updated _buildPlayerCardsTab() method for the ProfileScreen class
-
-Widget _buildPlayerCardsTab() {
-  return Stack(
-    children: [
-      CustomScrollView(
-        slivers: [
-          // Add some padding at the top of the tab
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 16),
-          ),
-          
-          // Horizontal scrolling cards with more padding
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 520, // Increased height for cards with margins
-              child: Stack(
-                children: [
-                  // Actual card list
-                  ListView.builder(
-                    controller: _cardsScrollController,
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.zero, // Remove padding
-                    physics: const PageScrollPhysics(), // Change to page scrolling
-                    itemCount: 7,
-                    itemBuilder: (context, index) {
-                      String game = index % 3 == 0 ? 'League of Legends' :
-                                  index % 3 == 1 ? 'Valorant' : 'CS:GO';
-                      
-                      String rank = index % 3 == 0 ? 'Platinum' :
-                                  index % 3 == 1 ? 'Diamond' : 'Global Elite';
-                      
-                      List<String> characters = index % 3 == 0 ? ['Ahri', 'Lux', 'Jinx'] :
-                                             index % 3 == 1 ? ['Jett', 'Reyna', 'Sage'] :
-                                             ['AWP', 'AK-47', 'M4A1-S'];
-                      
-                      String bio = index % 3 == 0 ? 'Mid lane main since Season 3' :
-                                 index % 3 == 1 ? 'Duelist main with 1.8 K/D ratio' :
-                                 'Entry fragger with 8 years of experience';
-                      
-                      String username = 'Player${index + 1}';
-                      String country = index % 3 == 0 ? 'USA' : 
-                                     index % 3 == 1 ? 'Canada' : 'UK';
-                      
-                      // Generate some sample stats for the card back
-                      Map<String, dynamic> playerStats = {
-                        'kd_ratio': (1.0 + index * 0.2).toStringAsFixed(1),
-                        'win_rate': '${50 + index * 3}%',
-                        'headshot': '${30 + index * 5}%',
-                        'accuracy': (0.4 + index * 0.05).clamp(0.0, 1.0),
-                        'clutch_rate': (0.3 + index * 0.06).clamp(0.0, 1.0),
-                        'support': (0.6 + index * 0.03).clamp(0.0, 1.0),
-                        'achievements': [
-                          {
-                            'title': 'First Place Tournament',
-                            'date': '2 weeks ago'
-                          },
-                          {
-                            'title': '5-Win Streak',
-                            'date': '3 days ago'
-                          },
-                          {
-                            'title': 'MVP of the Match',
-                            'date': 'Yesterday'
-                          }
-                        ]
-                      };
-                      
-                      // Add card with improved appearance
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: FlippablePlayerCard(
-                          gameName: game,
-                          rank: rank,
-                          mainCharacters: characters,
-                          bio: bio,
-                          username: username,
-                          country: country,
-                          stats: playerStats,
-                        ),
-                      );
-                    },
-                  ),
-                  
-                  // Right arrow (always shown when there are more cards)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: 32,
-                    child: AnimatedOpacity(
-                      opacity: _showRightArrow ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Colors.transparent,
-                              DiscordTheme.primaryRed.withOpacity(0.1),
-                              DiscordTheme.primaryRed.withOpacity(0.2),
-                            ],
-                          ),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.chevron_right,
-                            color: DiscordTheme.white,
-                            size: 24,
-                          ),
-                          onPressed: _showRightArrow ? () {
-                            // Scroll to the next card
-                            final nextPosition = _cardsScrollController.position.pixels + MediaQuery.of(context).size.width;
-                            _cardsScrollController.animateTo(
-                              nextPosition,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          } : null,
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  // Left arrow
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: 32,
-                    child: AnimatedOpacity(
-                      opacity: _showLeftArrow ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerRight,
-                            end: Alignment.centerLeft,
-                            colors: [
-                              Colors.transparent,
-                              DiscordTheme.primaryRed.withOpacity(0.1),
-                              DiscordTheme.primaryRed.withOpacity(0.2),
-                            ],
-                          ),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.chevron_left,
-                            color: DiscordTheme.white,
-                            size: 24,
-                          ),
-                          onPressed: _showLeftArrow ? () {
-                            // Scroll to the previous card
-                            final prevPosition = _cardsScrollController.position.pixels - MediaQuery.of(context).size.width;
-                            _cardsScrollController.animateTo(
-                              prevPosition.clamp(0.0, _cardsScrollController.position.maxScrollExtent),
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          } : null,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
-          // Empty state (when no cards are present)
-          SliverToBoxAdapter(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  children: [
-                    // Only show this when itemCount is 0 (moved to a separate widget for this example)
-                    if (false) // Replace with actual condition (here showing it as false for example)
-                      _buildEmptyStateWidget(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          
-          // Add extra padding at the bottom to ensure content doesn't get hidden behind nav bar
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 80), // Increase padding to account for bottom nav bar
-          ),
-        ],
-      ),
-    ],
-  );
-}
 
   Widget _buildGameLogo(String game) {
     IconData iconData;
@@ -576,266 +354,793 @@ Widget _buildPlayerCardsTab() {
     );
   }
 
-  Widget _buildEmptyStateWidget() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const SizedBox(height: 40),
-        Icon(
-          Icons.add_circle_outline,
-          size: 60,
-          color: DiscordTheme.softGrey.withOpacity(0.6),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'No player cards yet',
-          style: TextStyle(
-            color: DiscordTheme.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'Create your first player card to showcase your gaming skills and achievements',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: DiscordTheme.softGrey,
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 24),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: DiscordTheme.primaryRed,
-            foregroundColor: DiscordTheme.white,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+  Widget _buildHighlightsTab() {
+  return GridView.builder(
+    padding: const EdgeInsets.all(2.0), // Reduced padding to match Instagram's tight grid
+    physics: const BouncingScrollPhysics(),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 3, // Instagram uses 3 columns
+      childAspectRatio: 1.0, // Square aspect ratio
+      crossAxisSpacing: 2, // Minimal spacing between items
+      mainAxisSpacing: 2, // Minimal spacing between items
+    ),
+    itemCount: 2,
+    itemBuilder: (context, index) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background container (image/video placeholder)
+          Container(
+            color: DiscordTheme.darkGrey,
+            child: Center(
+              child: Icon(
+                Icons.play_circle_outline,
+                size: 30,
+                color: DiscordTheme.white.withOpacity(0.4),
+              ),
             ),
           ),
-          onPressed: () {
-            // Create new player card
-          },
-          child: const Text('Create Player Card'),
-        ),
-        const SizedBox(height: 40),
-      ],
+          
+          // Play icon in top right (like Instagram's video indicator)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Icon(
+              Icons.play_arrow,
+              size: 16,
+              color: DiscordTheme.white,
+            ),
+          ),
+          
+          // View count in bottom right (like Instagram)
+          Positioned(
+            bottom: 8,
+            right: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Text(
+                '${(index + 1) * 124}',
+                style: const TextStyle(
+                  color: DiscordTheme.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+  // New method to build the My Feed tab with posts in chronological order
+  Widget _buildMyFeedTab() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(12.0),
+      physics: const BouncingScrollPhysics(),
+      itemCount: 10, // Number of feed posts
+      separatorBuilder: (context, index) {
+        return Container(
+          height: 16,
+          color: Colors.transparent,
+        );
+      },
+      itemBuilder: (context, index) {
+        // Show different types of posts based on index, similar to feed_screen.dart
+        if (index % 3 == 0) {
+          return _buildPlayerCardPost(context, index);
+        } else if (index % 3 == 1) {
+          return _buildTextPost(context, index);
+        } else {
+          return _buildHighlightClipPost(context, index);
+        }
+      },
     );
   }
 
-  Widget _buildHighlightsTab() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 0), // Increase padding to account for bottom nav bar
-      child: GridView.builder(
-        padding: const EdgeInsets.all(16.0), // More padding
-        physics: const BouncingScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.8,
-          crossAxisSpacing: 16, // More spacing between items
-          mainAxisSpacing: 16, // More spacing between items
+  // Get the appropriate profile image based on type (copied from feed_screen.dart)
+  Widget _getProfileImage(String type) {
+    String imagePath;
+    switch (type.toLowerCase()) {
+      case 'f':
+        imagePath = 'assets/images/among_us_icon.jpg'; // Image 1
+        break;
+      case 'p':
+        imagePath = 'assets/images/rick_icon.jpg'; // Image 2
+        break;
+      case 'c':
+        imagePath = 'assets/images/cartoon_icon.jpg'; // Image 3
+        break;
+      default:
+        imagePath = 'assets/images/among_us_icon.jpg';
+    }
+    
+    return ClipOval(
+      child: Image.asset(
+        imagePath,
+        width: 32,
+        height: 32,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+  
+  // Get the rank color (copied from feed_screen.dart)
+  Color _getRankColor(String rank) {
+    switch (rank.toLowerCase()) {
+      case 'iron':
+        return const Color(0xFF7C8792);
+      case 'bronze':
+        return const Color(0xFFAD7F47);
+      case 'silver':
+        return const Color(0xFFAFB8C4);
+      case 'gold':
+        return const Color(0xFFECCE52);
+      case 'platinum':
+        return const Color(0xFF47B986);
+      case 'diamond':
+        return const Color(0xFF4A80EB);
+      case 'ascendant':
+        return const Color(0xFF44CE9C);
+      case 'immortal':
+        return const Color(0xFFBF4D4D);
+      case 'radiant':
+        return const Color(0xFFFFD700);
+      default:
+        return DiscordTheme.primaryRed;
+    }
+  }
+
+  // Build player card post (adapted from feed_screen.dart)
+  Widget _buildPlayerCardPost(BuildContext context, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: DiscordTheme.charcoalGrey,
+        border: Border.all(
+          color: DiscordTheme.darkGrey.withOpacity(0.8),
+          width: 2.0,
         ),
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(12), // More modern rounded corners
-            child: Stack(
-              fit: StackFit.expand,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(8.0), // Added rounded corners
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
               children: [
-                // Using Container with color instead of network image
-                Container(
-                  decoration: BoxDecoration(
-                    color: DiscordTheme.darkGrey,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                ),
-                // Gradient overlay for better text visibility
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          DiscordTheme.charcoalGrey.withOpacity(0.7),
-                          DiscordTheme.charcoalGrey.withOpacity(0.9),
-                        ],
-                        stops: const [0.6, 0.8, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                // Play button with improved styling
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: DiscordTheme.primaryRed.withOpacity(0.3),
-                      shape: BoxShape.circle,
-                      border: Border.all(
+                // Profile image
+                _getProfileImage('F'),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'ProGamerName', // Use the user's username instead of a generated one
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                         color: DiscordTheme.white,
-                        width: 2,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: DiscordTheme.primaryRed.withOpacity(0.3),
-                          blurRadius: 12,
-                          spreadRadius: 2,
-                        ),
-                      ],
                     ),
-                    child: const Icon(
-                      Icons.play_arrow,
-                      size: 36,
-                      color: DiscordTheme.white,
-                    ),
-                  ),
-                ),
-                // Add a game icon overlay
-                Positioned(
-                  top: 12,
-                  left: 12,
-                  child: _buildGameLogo(index % 3 == 0 ? 'Valorant' : 
-                                     index % 3 == 1 ? 'League of Legends' : 'CS:GO'),
-                ),
-                // Title at bottom
-                Positioned(
-                  bottom: 12,
-                  left: 12,
-                  right: 12,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Highlight ${index + 1}',
-                        style: const TextStyle(
-                          color: DiscordTheme.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.visibility_outlined,
-                            size: 14,
-                            color: DiscordTheme.softGrey,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${(index + 1) * 124} views',
-                            style: const TextStyle(
-                              color: DiscordTheme.softGrey,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                // Add duration badge
-                Positioned(
-                  bottom: 12,
-                  right: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      '0:${30 + (index * 7)}',
+                    Text(
+                      '${(index % 8) + 1}d ago', // Changed to days ago
                       style: const TextStyle(
-                        color: DiscordTheme.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
+                        color: DiscordTheme.softGrey,
+                        fontSize: 12,
                       ),
                     ),
+                  ],
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.more_horiz, color: DiscordTheme.white),
+                  iconSize: 20,
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Just updated my ${index % 2 == 0 ? "Valorant" : "League of Legends"} card!',
+              style: const TextStyle(
+                fontSize: 14,
+                color: DiscordTheme.white,
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 8),
+          
+          Container(
+            decoration: BoxDecoration(
+              color: DiscordTheme.darkGrey,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: index % 2 == 0 
+                    ? [DiscordTheme.primaryRed.withOpacity(0.7), DiscordTheme.charcoalGrey]
+                    : [DiscordTheme.darkGrey, DiscordTheme.charcoalGrey],
+              ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      _getProfileImage('F'),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'ProGamerName', // User's name
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: DiscordTheme.white,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        index % 2 == 0 ? 'Valorant' : 'League of Legends',
+                        style: const TextStyle(
+                          color: DiscordTheme.lightGrey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.more_vert, color: DiscordTheme.white),
+                        iconSize: 16,
+                        constraints: const BoxConstraints(),
+                        padding: const EdgeInsets.only(left: 8),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ),
+                
+                SizedBox(
+                  height: 220,
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Icon(
+                          index % 2 == 0 ? Icons.gps_fixed : Icons.shield,
+                          size: 80,
+                          color: DiscordTheme.white.withOpacity(0.3),
+                        ),
+                      ),
+                      
+                      Positioned(
+                        top: 12,
+                        left: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: DiscordTheme.charcoalGrey.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.public,
+                                size: 14,
+                                color: DiscordTheme.lightGrey,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                index % 3 == 0 ? 'USA' : (index % 3 == 1 ? 'Canada' : 'UK'),
+                                style: const TextStyle(
+                                  color: DiscordTheme.lightGrey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: DiscordTheme.charcoalGrey.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.emoji_events,
+                                size: 14,
+                                color: _getRankColor(index % 4 == 0 ? 'Platinum' : 
+                                                  index % 4 == 1 ? 'Diamond' : 
+                                                  index % 4 == 2 ? 'Gold' : 'Radiant'),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                index % 4 == 0 ? 'PLATINUM' : 
+                                index % 4 == 1 ? 'DIAMOND' : 
+                                index % 4 == 2 ? 'GOLD' : 'RADIANT',
+                                style: TextStyle(
+                                  color: _getRankColor(index % 4 == 0 ? 'Platinum' : 
+                                                    index % 4 == 1 ? 'Diamond' : 
+                                                    index % 4 == 2 ? 'Gold' : 'Radiant'),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          );
-        },
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.favorite_border, color: DiscordTheme.white),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: const Icon(Icons.chat_bubble_outline, color: DiscordTheme.white),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send_outlined, color: DiscordTheme.white),
+                  onPressed: () {},
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.bookmark_border, color: DiscordTheme.white),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              '${267 - (index * 30)} likes', // Decreasing number of likes based on age
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: DiscordTheme.white,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+            child: RichText(
+              text: const TextSpan(
+                style: TextStyle(fontSize: 14, color: DiscordTheme.white),
+                children: [
+                  TextSpan(
+                    text: 'ProGamerName ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text: 'Duelist main with 1.8 K/D ratio',
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 8.0),
+            child: Text(
+              index % 2 == 0 
+                ? '#Jett #Reyna #Sage' 
+                : '#Ahri #Lux #Jinx',
+              style: const TextStyle(
+                color: DiscordTheme.primaryRed,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+            child: Text(
+              '${(index % 8) + 1} days ago',
+              style: const TextStyle(
+                color: DiscordTheme.softGrey,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
+  Widget _buildTextPost(BuildContext context, int index) {
+  return Container(
+    decoration: BoxDecoration(
+      color: DiscordTheme.charcoalGrey,
+      border: Border.all(
+        color: DiscordTheme.darkGrey.withOpacity(0.8),
+        width: 2.0,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.3),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+      borderRadius: BorderRadius.circular(8.0), // Added rounded corners
+    ),
+    margin: const EdgeInsets.symmetric(horizontal: 2),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            children: [
+              // Profile image using the logged-in user's image
+              _getProfileImage('P'),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'ProGamerName', // User's name instead of generated name
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: DiscordTheme.white,
+                    ),
+                  ),
+                  Text(
+                    '${(index % 6) + 2}d ago', // Changed to days ago
+                    style: const TextStyle(
+                      color: DiscordTheme.softGrey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.more_horiz, color: DiscordTheme.white),
+                iconSize: 20,
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+        
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16.0),
+          color: DiscordTheme.darkGrey,
+          child: Text(
+            index % 2 == 0 
+                ? 'Looking for a Diamond+ support main for duo queue tonight. Must have mic and good comms. DM me if interested!' 
+                : 'Just hit Diamond rank in Valorant! Looking for a team to grind with this weekend. Discord voice preferred.',
+            style: const TextStyle(
+              fontSize: 16,
+              color: DiscordTheme.white,
+              height: 1.4,
+            ),
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            index % 2 == 0 
+                ? '#Diamond #Support #VoiceComms' 
+                : '#Valorant #Grinding #WeekendWarrior',
+            style: const TextStyle(
+              color: DiscordTheme.primaryRed,
+              fontSize: 14,
+            ),
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.favorite_border, color: DiscordTheme.white),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.chat_bubble_outline, color: DiscordTheme.white),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.send_outlined, color: DiscordTheme.white),
+                onPressed: () {},
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.bookmark_border, color: DiscordTheme.white),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            '${42 + (index * 7)} likes',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: DiscordTheme.white,
+              fontSize: 14,
+            ),
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
+          child: Text(
+            '${(index % 6) + 2} days ago',
+            style: const TextStyle(
+              color: DiscordTheme.softGrey,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
-// Modernized Card Activity Screen with Discord theme
-class CardActivityScreen extends StatelessWidget {
-  const CardActivityScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: DiscordTheme.charcoalGrey,
-      appBar: AppBar(
-        title: const Text('Activity'),
-        backgroundColor: DiscordTheme.darkGrey,
-        elevation: 0,
+// Build highlight clip post (adapted from feed_screen.dart)
+Widget _buildHighlightClipPost(BuildContext context, int index) {
+  return Container(
+    decoration: BoxDecoration(
+      color: DiscordTheme.charcoalGrey,
+      border: Border.all(
+        color: DiscordTheme.darkGrey.withOpacity(0.8),
+        width: 2.0,
       ),
-      body: ListView.separated(
-        physics: const BouncingScrollPhysics(),
-        itemCount: 20,
-        separatorBuilder: (context, index) => const Divider(
-          color: DiscordTheme.darkGrey,
-          height: 1,
-          indent: 70,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.3),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
         ),
-        itemBuilder: (context, index) {
-          return ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            leading: CircleAvatar(
-              backgroundColor: index % 3 == 0 ? DiscordTheme.primaryRed :
-                            index % 3 == 1 ? DiscordTheme.mutedRed : 
-                                        DiscordTheme.darkGrey,
-              child: Icon(
-                index % 3 == 0 ? Icons.update :
-                index % 3 == 1 ? Icons.star : Icons.trending_up,
-                color: DiscordTheme.white,
-                size: 20,
+      ],
+      borderRadius: BorderRadius.circular(8.0), // Added rounded corners
+    ),
+    margin: const EdgeInsets.symmetric(horizontal: 2),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            children: [
+              // Profile image
+              _getProfileImage('C'),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'ProGamerName', // User's name
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: DiscordTheme.white,
+                    ),
+                  ),
+                  Text(
+                    '${(index % 10) + 1}d ago', // Changed to days ago
+                    style: const TextStyle(
+                      color: DiscordTheme.softGrey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            title: Text(
-              index % 4 == 0 ? 'Updated your Valorant rank to Diamond' :
-              index % 4 == 1 ? 'Gained 14 new followers this week' :
-              index % 4 == 2 ? 'Win streak: 5 games in League of Legends' :
-                          'Matched with Player${index + 10} for duo queue',
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: DiscordTheme.white,
-                fontSize: 15,
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.more_horiz, color: DiscordTheme.white),
+                iconSize: 20,
+                onPressed: () {},
               ),
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 6.0),
-              child: Text(
-                '${index * 3 + 1} hours ago',
-                style: const TextStyle(
-                  color: DiscordTheme.softGrey,
-                  fontSize: 13,
+            ],
+          ),
+        ),
+        
+        Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.width * 0.75, // Make it a bit shorter than the feed
+          color: DiscordTheme.darkGrey,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Placeholder for video
+              Container(
+                color: DiscordTheme.darkGrey,
+                child: Center(
+                  child: Icon(
+                    Icons.movie_outlined,
+                    size: 80,
+                    color: DiscordTheme.white.withOpacity(0.2),
+                  ),
                 ),
               ),
+              // Play button
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: DiscordTheme.primaryRed.withOpacity(0.3),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: DiscordTheme.white, width: 2),
+                ),
+                child: const Icon(Icons.play_arrow, size: 40, color: DiscordTheme.white),
+              ),
+              // Video duration
+              Positioned(
+                bottom: 12,
+                right: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '0:${30 + (index * 5)}',
+                    style: const TextStyle(
+                      color: DiscordTheme.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.favorite_border, color: DiscordTheme.white),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.chat_bubble_outline, color: DiscordTheme.white),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.send_outlined, color: DiscordTheme.white),
+                onPressed: () {},
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.bookmark_border, color: DiscordTheme.white),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${(index + 1) * 124} views',
+                style: const TextStyle(
+                  color: DiscordTheme.white,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${(index + 1) * 23} likes',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: DiscordTheme.white,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(fontSize: 14, color: DiscordTheme.white),
+              children: [
+                const TextSpan(
+                  text: 'ProGamerName ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: index % 2 == 0 
+                    ? 'Clutched a 1v5 in Valorant! Check this out!' 
+                    : 'My best play this season! #BronzeToRadiant',
+                ),
+              ],
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 8.0),
+          child: Text(
+            index % 2 == 0 
+              ? '#Clutch #Valorant #Gaming' 
+              : '#BronzeToRadiant #GrindTime',
+            style: const TextStyle(
+              color: DiscordTheme.primaryRed,
+              fontSize: 14,
+            ),
+          ),
+        ),
+        
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+          child: Text(
+            '${(index % 10) + 1} days ago',
+            style: const TextStyle(
+              color: DiscordTheme.softGrey,
+              fontSize: 12,
+            ),
+          ),
+        ),
+
+        
+      ],
+
+      
+    ),
+
+    
+  );
+
+  
 }
 
-// Helper class for the sticky tab bar
+
+}
+
+// Add the _SliverAppBarDelegate class here
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar _tabBar;
 

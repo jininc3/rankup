@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/game_player_card.dart';
+import '../widgets/flippable_player_card.dart';
+import '../widgets/player_card_back.dart';
+import '../widgets/game_player_card.dart';
+
 
 // Define the Discord Red & Grey theme colors
 class DiscordTheme {
@@ -339,187 +343,202 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildPlayerCardsTab() {
-    return Stack(
-      children: [
-        CustomScrollView(
-          slivers: [
-            // Add some padding at the top of the tab
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 16),
-            ),
-            
-            // Horizontal scrolling cards with more padding
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 520, // Increased height for cards with margins
-                child: Stack(
-                  children: [
-                    // Actual card list
-                    ListView.builder(
-                      controller: _cardsScrollController,
-                      scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.zero, // Remove padding
-                      physics: const PageScrollPhysics(), // Change to page scrolling
-                      itemCount: 7,
-                      itemBuilder: (context, index) {
-                        String game = index % 3 == 0 ? 'League of Legends' :
-                                    index % 3 == 1 ? 'Valorant' : 'CS:GO';
-                        
-                        String rank = index % 3 == 0 ? 'Platinum' :
-                                    index % 3 == 1 ? 'Diamond' : 'Global Elite';
-                        
-                        List<String> characters = index % 3 == 0 ? ['Ahri', 'Lux', 'Jinx'] :
-                                               index % 3 == 1 ? ['Jett', 'Reyna', 'Sage'] :
-                                               ['AWP', 'AK-47', 'M4A1-S'];
-                        
-                        String bio = index % 3 == 0 ? 'Mid lane main since Season 3' :
-                                   index % 3 == 1 ? 'Duelist main with 1.8 K/D ratio' :
-                                   'Entry fragger with 8 years of experience';
-                        
-                        String username = 'Player${index + 1}';
-                        String country = index % 3 == 0 ? 'USA' : 
-                                       index % 3 == 1 ? 'Canada' : 'UK';
-                        
-                        // Add card with improved appearance
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              // The card itself
-                              GamePlayerCard(
-                                gameName: game,
-                                rank: rank,
-                                mainCharacters: characters,
-                                bio: bio,
-                                username: username,
-                                country: country,
-                                onTap: () {
-                                  // View card details
-                                },
-                              ),
-                              
-                              // Game-specific icon (smaller logos for each game)
-                             
+ // This is the updated _buildPlayerCardsTab() method for the ProfileScreen class
+
+Widget _buildPlayerCardsTab() {
+  return Stack(
+    children: [
+      CustomScrollView(
+        slivers: [
+          // Add some padding at the top of the tab
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 16),
+          ),
+          
+          // Horizontal scrolling cards with more padding
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 520, // Increased height for cards with margins
+              child: Stack(
+                children: [
+                  // Actual card list
+                  ListView.builder(
+                    controller: _cardsScrollController,
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.zero, // Remove padding
+                    physics: const PageScrollPhysics(), // Change to page scrolling
+                    itemCount: 7,
+                    itemBuilder: (context, index) {
+                      String game = index % 3 == 0 ? 'League of Legends' :
+                                  index % 3 == 1 ? 'Valorant' : 'CS:GO';
+                      
+                      String rank = index % 3 == 0 ? 'Platinum' :
+                                  index % 3 == 1 ? 'Diamond' : 'Global Elite';
+                      
+                      List<String> characters = index % 3 == 0 ? ['Ahri', 'Lux', 'Jinx'] :
+                                             index % 3 == 1 ? ['Jett', 'Reyna', 'Sage'] :
+                                             ['AWP', 'AK-47', 'M4A1-S'];
+                      
+                      String bio = index % 3 == 0 ? 'Mid lane main since Season 3' :
+                                 index % 3 == 1 ? 'Duelist main with 1.8 K/D ratio' :
+                                 'Entry fragger with 8 years of experience';
+                      
+                      String username = 'Player${index + 1}';
+                      String country = index % 3 == 0 ? 'USA' : 
+                                     index % 3 == 1 ? 'Canada' : 'UK';
+                      
+                      // Generate some sample stats for the card back
+                      Map<String, dynamic> playerStats = {
+                        'kd_ratio': (1.0 + index * 0.2).toStringAsFixed(1),
+                        'win_rate': '${50 + index * 3}%',
+                        'headshot': '${30 + index * 5}%',
+                        'accuracy': (0.4 + index * 0.05).clamp(0.0, 1.0),
+                        'clutch_rate': (0.3 + index * 0.06).clamp(0.0, 1.0),
+                        'support': (0.6 + index * 0.03).clamp(0.0, 1.0),
+                        'achievements': [
+                          {
+                            'title': 'First Place Tournament',
+                            'date': '2 weeks ago'
+                          },
+                          {
+                            'title': '5-Win Streak',
+                            'date': '3 days ago'
+                          },
+                          {
+                            'title': 'MVP of the Match',
+                            'date': 'Yesterday'
+                          }
+                        ]
+                      };
+                      
+                      // Add card with improved appearance
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: FlippablePlayerCard(
+                          gameName: game,
+                          rank: rank,
+                          mainCharacters: characters,
+                          bio: bio,
+                          username: username,
+                          country: country,
+                          stats: playerStats,
+                        ),
+                      );
+                    },
+                  ),
+                  
+                  // Right arrow (always shown when there are more cards)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 32,
+                    child: AnimatedOpacity(
+                      opacity: _showRightArrow ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Colors.transparent,
+                              DiscordTheme.primaryRed.withOpacity(0.1),
+                              DiscordTheme.primaryRed.withOpacity(0.2),
                             ],
                           ),
-                        );
-                      },
-                    ),
-                    
-                    // Right arrow (always shown when there are more cards)
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      bottom: 0,
-                      width: 32,
-                      child: AnimatedOpacity(
-                        opacity: _showRightArrow ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                Colors.transparent,
-                                DiscordTheme.primaryRed.withOpacity(0.1),
-                                DiscordTheme.primaryRed.withOpacity(0.2),
-                              ],
-                            ),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.chevron_right,
+                            color: DiscordTheme.white,
+                            size: 24,
                           ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.chevron_right,
-                              color: DiscordTheme.white,
-                              size: 24,
-                            ),
-                            onPressed: _showRightArrow ? () {
-                              // Scroll to the next card
-                              final nextPosition = _cardsScrollController.position.pixels + MediaQuery.of(context).size.width;
-                              _cardsScrollController.animateTo(
-                                nextPosition,
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            } : null,
-                          ),
+                          onPressed: _showRightArrow ? () {
+                            // Scroll to the next card
+                            final nextPosition = _cardsScrollController.position.pixels + MediaQuery.of(context).size.width;
+                            _cardsScrollController.animateTo(
+                              nextPosition,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          } : null,
                         ),
                       ),
                     ),
-                    
-                    // Left arrow
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      bottom: 0,
-                      width: 32,
-                      child: AnimatedOpacity(
-                        opacity: _showLeftArrow ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerRight,
-                              end: Alignment.centerLeft,
-                              colors: [
-                                Colors.transparent,
-                                DiscordTheme.primaryRed.withOpacity(0.1),
-                                DiscordTheme.primaryRed.withOpacity(0.2),
-                              ],
-                            ),
+                  ),
+                  
+                  // Left arrow
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 32,
+                    child: AnimatedOpacity(
+                      opacity: _showLeftArrow ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerRight,
+                            end: Alignment.centerLeft,
+                            colors: [
+                              Colors.transparent,
+                              DiscordTheme.primaryRed.withOpacity(0.1),
+                              DiscordTheme.primaryRed.withOpacity(0.2),
+                            ],
                           ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.chevron_left,
-                              color: DiscordTheme.white,
-                              size: 24,
-                            ),
-                            onPressed: _showLeftArrow ? () {
-                              // Scroll to the previous card
-                              final prevPosition = _cardsScrollController.position.pixels - MediaQuery.of(context).size.width;
-                              _cardsScrollController.animateTo(
-                                prevPosition.clamp(0.0, _cardsScrollController.position.maxScrollExtent),
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            } : null,
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.chevron_left,
+                            color: DiscordTheme.white,
+                            size: 24,
                           ),
+                          onPressed: _showLeftArrow ? () {
+                            // Scroll to the previous card
+                            final prevPosition = _cardsScrollController.position.pixels - MediaQuery.of(context).size.width;
+                            _cardsScrollController.animateTo(
+                              prevPosition.clamp(0.0, _cardsScrollController.position.maxScrollExtent),
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          } : null,
                         ),
                       ),
                     ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          // Empty state (when no cards are present)
+          SliverToBoxAdapter(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    // Only show this when itemCount is 0 (moved to a separate widget for this example)
+                    if (false) // Replace with actual condition (here showing it as false for example)
+                      _buildEmptyStateWidget(),
                   ],
                 ),
               ),
             ),
-            
-            // Empty state (when no cards are present)
-            SliverToBoxAdapter(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Column(
-                    children: [
-                      // Only show this when itemCount is 0 (moved to a separate widget for this example)
-                      if (false) // Replace with actual condition (here showing it as false for example)
-                        _buildEmptyStateWidget(),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            
-            // Add extra padding at the bottom to ensure content doesn't get hidden behind nav bar
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 80), // Increase padding to account for bottom nav bar
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+          ),
+          
+          // Add extra padding at the bottom to ensure content doesn't get hidden behind nav bar
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 80), // Increase padding to account for bottom nav bar
+          ),
+        ],
+      ),
+    ],
+  );
+}
 
   Widget _buildGameLogo(String game) {
     IconData iconData;
